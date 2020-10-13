@@ -1,7 +1,7 @@
-StdPairs
+stdPairs
 ================
 
-StdPairs is a library of SageMath that gives symbolic computation over a monomial ideal of an affine (non-normal) semigroup ring. In particular, it provides associate prime ideals, multiplicity, and irredundant irreducible primary decomposition of a monomial ideal. It implements algorithms in [Matusevich and Yu, 2020](https://arxiv.org/abs/2005.10968). 
+stdPairs is a library of SageMath that gives symbolic computation over a monomial ideal of an affine (non-normal) semigroup ring. In particular, it provides associate prime ideals, multiplicity, and irredundant irreducible primary decomposition of a monomial ideal. It implements algorithms in [Matusevich and Yu, 2020](https://arxiv.org/abs/2005.10968). 
 
 The source file can be found on the [github pages](https://github.com/byeongsuyu/StdPairs/). 
 
