@@ -1,0 +1,2081 @@
+import numpy as np
+import time
+import ast
+import json
+from pathlib import Path
+from sage.all import ZZ
+from sage.all import matrix
+from sage.all import macaulay2
+from sage.all import DiGraph
+from sage.all import cartesian_product
+from sage.combinat.posets.posets import FinitePoset
+from sage.combinat.combination import Combinations
+from sage.interfaces.four_ti_2 import four_ti_2
+import sage.geometry.polyhedron.constructor as const
+
+#### class of affine semigroup
+class affineMonoid():
+    """A class of affine monoid. It is defined by a matrix of nonnegative integers. It has sevaral variables.
+    
+    Argument
+    Sage Matrix (dtype =ZZ) or numpy 2D array(dtype=int)
+        genset
+                    Generating set as a numpy matrix. Each column represent a generator in Z^n.
+    
+    Member Variables:
+    np.array(2D) 
+        gens
+                    Generating set as a numpy matrix. Each column represent a generator in Z^n.
+    sage.geometry.polyhedron.parent.Polyhedra_ZZ_ppl_with_category.element_class 
+        poly
+                    An integer based polyhedra defined by gens.
+                    
+    sage.combinat.posets.lattices.FiniteLatticePoset_with_category
+        faceLattice
+                    The face lattice of the affine monoid, whose elements is set of column numbers 
+                    corresponding to faces as a submatrix of gens. Notes that
+                    (-1)-dimensional face : (-1,)
+                    0-dimensional face : ()
+                    Top-dimensional face
+    dictionary
+        indexToFace ={ tuple face : sage.geometry.polyhedron.face.PolyhedronFace face }
+                    A dictionary whose keys are faces as a column indices of gens, whose values are faces of
+                    sagemath polyhedron.
+                    
+        integralSupportVectors = { tuple face : np.ndarray support_vectors}
+                    A dictionary whose keys are faces as a column indices of gens, whose values are an
+                    2D array of integral support vectors. Each row v represent an equation of hyperplane
+                    as follow;
+                    vector v  -> v * x +0 >= 0 or a * x +0 == 0         
+    bool
+        isPointed
+                    A boolean which gives True if an affine monoid is pointed.
+                    
+    
+    
+    Member Methods:
+    __init__(set, np.ndarray(2D) genset)
+    
+                    Construct an affine monoid type variable.
+    np.ndarray Face(tuple face)
+    
+                    Return a face as an array of affine monoid with given index. 
+                    Index must be a tuple or list of tuples of faceLattice.
+                    For faces with -1 dimesion or 1-dimension, return empty array.
+    
+    tuple
+        IndFace(np.array (2D) face)
+    
+                    Return an index of a given face as an array. 
+                    For an empty array, return an index of zero-dimensional face, i.e., ().
+    
+                    
+    sage.matrix.matrix_integer_dense.Matrix_integer_dense
+        isElement(np.array (1D) vector)
+    
+                    Return a coordinate of the vector if the vector is an element of the affine semigroup.
+                    Notes that the type of returned value is sage matrix, thus even if it is an empty matrix,
+                    python regards an empty matrix as True. Use .nrows() instead to check emptyness.
+                    
+    sage.matrix.matrix_integer_dense.Matrix_integer_dense
+        isIntersectionOfSubmonoid(np.ndarray(2D) monomial_a, tuple face_a, 
+                                np.ndarray(2D) monomial_b, tuple face_b) 
+    
+                    Given two pair (monomial_a, face_a) and (monomial_b, face_b) find their intersection's 
+                    minimal solution. In other words, find all coordinatewise minimal c = [f;g] such that
+                    a+f-g = b where f in face_a, g in face_b.
+
+    
+    Not implemented
+    Localization(affineMonoid A, tuple face or np.ndarray(2D) vectors )
+
+                    Return a localization of A by the face (given by tuple or a minimal face 
+                    containing all vectors) 
+    
+            
+    """
+    def __init__(self, genset, isNormaliz=False):
+        if not isinstance(isNormaliz, bool):
+            raise ValueError("[Error] 2nd argument must be boolean for determining whether use PyNormliz or not.")
+        type_mat = type(matrix(ZZ,0))
+        if isinstance(genset, type_mat):
+            genset = np.array(genset)
+        del type_mat
+        if len(genset.shape)!=2:
+            raise ValueError("[Error] Not a valid affine semigroup ring; parameter should be 2D array.")
+        if (genset.dtype != 'int32') and (genset.dtype != 'int64'):
+            raise ValueError('[Error] genset should have dtype int32 or int64.')
+        #Initialize the generators of affine monoid
+        # Notes that we sort genset by lexicographical order of columns; this is required for equality.
+        self.gens=genset
+            
+        #Initialize corresponding real polyhedron.
+        if ~(self.gens.any(axis=0).any()): # When the matrix is just zero matrix,
+            #Create a normal integral polyhedron with vertex 0.
+            self.__isZeromonoid_bool =True
+            if isNormaliz:
+                self.poly = const.Polyhedron(vertices=list(map(tuple, self.gens)),backend='normaliz', base_ring = ZZ)
+            else:
+                self.poly = const.Polyhedron(vertices=list(map(tuple, self.gens)), base_ring = ZZ)
+        else:
+            #Creat a normal integral polyhedron whose rays are columns of self.gens
+            if isNormaliz:
+                self.poly=const.Polyhedron(rays=(self.gens.transpose()).tolist(),backend='normaliz', base_ring = ZZ)
+            else:
+                self.poly=const.Polyhedron(rays=(self.gens.transpose()).tolist(), base_ring = ZZ)
+            self.__isZeromonoid_bool =False
+            
+        # Get the coefficients of equations or inequalities.
+        # In case such that whose dimension of polyhedron is less than its amibent real space,
+        # This integral support vector must contain a equality.
+        # This procedure did not distinguish equality and inequalities
+        # Also, the corresponding inequality of a given integal_support_vector v is
+        # v (dot product)x + 0 >= 0.
+        
+        
+        # Determine whether affine monoid is pointe or not.
+        if self.poly.faces(0):
+            self.__isPointed_bool=True
+        else:
+            self.__isPointed_bool=False
+        
+        # Generate Face Dictionary - Start
+        # 1) Get a face lattice of real polyhedron.
+        # 2) Set the top and bottom (especially 0-dim and -1-dim faces) as a tuple.
+        #    -1 dim face will be replaced with (-1,)
+        #     0 dim face will be replaced with () (empty tuple)
+        #     top dim face will be replaced with self.genset
+        
+        #Initialize the dictionary of integral support vectors
+        self.integralSupportVectors={}
+    
+        polylattice=self.poly.face_lattice()
+        lattice_dict={}
+        lattice=polylattice.list()
+        # For -1-dimensional face, set index (-1,)
+        if self.poly.faces(-1):
+            lattice_dict.update({self.poly.faces(-1)[0]:(-1,)})
+            del lattice[0]
+        # For any other faces,
+        for face in lattice:
+            # For given face, find an integral support vectors of face
+            HVector= np.array([ np.array(eq.A()) for eq in face.ambient_Hrepresentation()])
+            # Now find indices of face as a submatrix of self.gens
+            if HVector.any():
+                Ind=tuple(np.where((np.matmul(HVector, self.gens)).sum(axis=0) == 0)[0])
+            else:
+                Ind=tuple([i for i in range(self.gens.shape[1])])
+            #Sort indices
+            Ind = tuple(sorted(Ind))
+            #Update dictionaries
+            lattice_dict.update({face:Ind})
+            self.integralSupportVectors.update({Ind:HVector})
+        # Relabel facelattice for an affine monoid.
+        self.faceLattice=polylattice.relabel(lattice_dict)
+        # Save indexToFace as {Ind:face} form.
+        self.indexToFace={v: k for k, v in lattice_dict.items()}
+        
+        
+        # This variable is for hash
+        # Initialize
+        self.hashstring=''
+        # Calculate minimal generators
+        if self.__isZeromonoid_bool:
+            self.mingens = self.gens
+        else:
+            self.mingens = monomialIdeal(self,self.gens).gens
+        self.hashstring = np2d_to_string(self.mingens)
+        # Lastly, store minimal generators.
+    def isEmpty(self):
+        return self.__isZeromonoid_bool
+    def isPointed(self):
+        return self.__isPointed_bool
+    def save(self, path_of_file):
+        """Save the affineMonoid object as a text file."""
+        # If path_of_file starts with ~, change it as a Home directory.
+        if not isinstance(path_of_file,str):
+            raise ValueError("[Error]: The given instance is not a valid path")
+        if path_of_file[0] == '~':
+            path_of_file = str(Path.home())+path_of_file[1:]
+        with open(path_of_file,'w') as f:
+            f.write("Q\n"+np2d_to_string(self.gens)+"\n")
+        f.close()
+
+    def Face(self, index):
+        """Given an index of columns of generating set, return its face as a submatrix of geneating set."""
+        if not isinstance(index,tuple):
+            raise ValueError("[Error]:Instance is not a tuple.")
+        if index in self.faceLattice:
+            if index != (-1,):
+                return self.gens[:,index]
+            else:
+                return np.array([])
+        else:
+            raise ValueError("[Error]:Instance is not a face of the affine monoid")
+    def primeIdeal(self, index):
+        """Given an index of face, return the prime ideal corresponding to face."""
+        if not isinstance(index,tuple):
+            raise ValueError("[Error]:Instance is not a tuple.")
+        if index in self.faceLattice:
+            if index != (-1,):
+                complement_index=[]
+                for ind in range(self.gens.shape[1]):
+                    if ind not in index:
+                        complement_index.append(ind)
+                complement_index = tuple(complement_index)
+                return monomialIdeal(self,self.gens[:,complement_index])
+            else:
+                raise ValueError("[Error]: (-1,) does not corresponds to a prime ideal.")
+        else:
+            raise ValueError("[Error]:Instance is not a face of the affine monoid")
+
+            
+    def IndFace(self, face):
+        """Given a face (a submatrix of a generating set) return their index on the face lattice."""
+        type_mat = type(matrix(ZZ,0))
+        if isinstance(face, type_mat):
+            face = np.array(face)
+        del type_mat
+        if len(face.shape) !=2:
+            raise ValueError("[Error]: an argument is not 2D numpy array.")
+        if face.shape[1]==0:
+            return ()
+        # Collect all column indices of self.gens which are also a column of the given face.
+        # Return the collected indices as a tuple.
+        j=0
+        ind=[]
+        for i in range(self.gens.shape[1]):
+            if np.array_equal(face[:,(j,)],self.gens[:,(i,)]):
+                j=j+1
+                ind.append(i)
+            if j == face.shape[1]:
+                return tuple(ind)
+        raise ValueError("[Error]:An argument's column dimension exceed the generators of ambient monoid.")
+
+    def isElement(self, vector): 
+        """ This get a monomial vector as a numpy's 2D column vector (n x 1), and return a minimal solution.
+        """
+        type_mat = type(matrix(ZZ,0))
+        if isinstance(vector, type_mat):
+            vector = np.array(vector)
+        del type_mat
+        if len(vector.shape)!=2:
+            raise ValueError("[Error]:The vector is not a 2D-array")
+        else:
+            if vector.shape[1]!=1:
+                raise ValueError("[Error]:The vector is not a column vector")
+        # Make a matrix B=[A;A]
+        B=np.concatenate((self.gens,self.gens))
+        # Transpose a 2D column vector into 1D vector.
+        vector=vector.flatten()
+        # sign for zsolve
+        # If B is n x m matrix, then sgn is m x 1 matrix whose entries are 1.
+        # 1 implies that solution should be nonnegative.
+        sgn = [1 for column in B.T]
+        # relation for zsolve.
+        # What we have is [<=; >=], which is needed to solve an integer equation.
+        rel=['<'] * self.gens.shape[0] + ['>']*self.gens.shape[0]
+        # Solve it using zsolve.
+        result=four_ti_2.zsolve(B.tolist(), rel, vector.tolist()+vector.tolist(), sgn)
+        return_sol = result[0]
+        inf_sol = result[2]
+        del result
+        # Notes that result[0]: Inhomogeneous solution Bx = [vector;vector]
+        # result[1]: Homogeneous solution Bx=0
+        # result[2]: Affine monoid whose solution set lives in
+        if inf_sol: #If solution is infinite,
+            raise ValueError("[Error]: Solution space is not finite, which is impossible in this case.")
+        return return_sol
+    def isIntersectionOfSubmonoid(self, monomial_a, face_a, monomial_b, face_b):
+        """ Given two proper pairs (monomial_a,face_a) and (monomial_b,face_b), 
+            find a nonnegative vector u and v such that
+            monomial_a+ face_a * u = monomial_b+ face_b * v. 
+            (Here * denots a matrix multiplication.)
+            
+            This algorithm solves a linear system
+            [face_a, -face_b]*[u;v] = face_a * u- face_b * v = monomial_b-monomial_a.
+            To have optimization, we intended to use isElement.
+        """
+        type_mat = type(matrix(ZZ,0))
+        if isinstance(monomial_a, type_mat):
+            monomial_a = np.array(monomial_a)
+        if isinstance(monomial_b, type_mat):
+            monomial_b = np.array(monomial_b)
+        del type_mat
+        if not(isinstance(monomial_a, np.ndarray) and isinstance(monomial_a, np.ndarray)):
+            raise ValueError("[Error]:At least one of monomials is not a type of np.ndarray.")
+        if (len(monomial_a.shape)!=2) or (len(monomial_b.shape)!=2):
+            raise ValueError("[Error]:At least one of monomials is not a 2D array")
+        if (monomial_a.shape[1] != 1) or (monomial_b.shape[1] != 1):
+            raise ValueError("[Error]:At least one of monomials has more than 1 column")
+        if (not face_a in self.faceLattice.list()) or (not face_b in self.faceLattice.list()):
+            raise ValueError("[Error]:At least one of faces is not in the face of ambient monoid")
+        #Generate an affine monoid with pair_a's face with - pair_b's face.
+        temp_gens=np.concatenate((self.Face(face_a),-self.Face(face_b)), axis=1)
+        temp_monoid = affineMonoid(temp_gens).isElement(monomial_b - monomial_a)
+        #Return the minimal solutions
+        return temp_monoid
+    def __str__(self):
+        return "An affine semigroup whose generating set is \n"+np.array2string(self.gens)
+    def __repr__(self):
+        return str(self)
+    def __eq__(self, other):
+        if not isinstance(other, type(self)): return NotImplemented
+        return (self.hashstring == other.hashstring)
+
+#### Class of monomial ideal
+class monomialIdeal:
+    """
+    A class of a (monomial) ideal of a given nonzero affine monoid. It is defined by an ambient 
+    affine monoid (1st parameter) with its generators (2nd parameter).
+    
+    Arguments:
+    
+        affineMonoid ambientMonoid
+                An amibent monoid where the ideal lives in.
+                
+        np.ndarray(2D) genset
+                A generating set of ideals. Each column represent a generator.
+    
+    Member Variables:
+    
+        np.ndarray(2D)
+            gens
+                The set of minimal generators of I.
+                
+        affineMonoid
+            ambientMonoid
+                An ambient monoid of the given ideal
+        bool
+            isPrincipal
+                If the ideal is principal, return True. Otherwise, return False.
+
+            isEmptyIdeal
+                If the ideal is empty ideal, return True. Otherwise, return False.
+    
+    Member Methods:
+        __init__(affineMonoid ambientMonoid, np.ndarray(2D) genset)
+                Constructor of the class. Generate an ideal of genset in ambientMonoid.
+                
+        np.ndarray (2D)
+            __mingens(np.ndarray(2D) genset)
+        
+                Given a generating set, return the minimal generating set of an ideal.
+                This is called when the ideal is constructed.
+        
+        sage.matrix.matrix_integer_dense.Matrix_integer_dense
+            isElement(np.ndarray(2D) monomial)
+        
+                Given a monomial (n x 1 2D array), determine whether monomial is an element of ideal or not.
+                If it is an element of given ideal, return a minimal solution vector A.
+        
+        bool isStdMonomial(np.ndarray(2D) monomial)
+                Given a monomial (n x 1 2D array), determine whether monomial is a standar monomial or not.
+                This only returns boolean, even if the given monomial is a member of Element.
+        
+        monomialIdeal __add__(self, other)        
+                This defines an addition of ideals, as an ideal having generators of both ideals.
+                
+    Not implemented yet
+        intersection, containment
+    """
+    def __init__(self, ambientMonoid, genset):
+        type_mat = type(matrix(ZZ,0))
+        if isinstance(genset, type_mat):
+            genset = np.array(genset)
+        del type_mat
+        # Check types of the input
+        if not isinstance(ambientMonoid, affineMonoid):
+            raise ValueError("[Error]: the first parameter is not an affine monoid")
+        if len(genset.shape)!=2:
+            raise ValueError("[Error]: the generating set is 1D-array; you need 2D array whose column corresponds to a generator.")
+        #Check that each generators are inside of an ambient monoid.
+        if (genset.size == 0):
+            self.gens=genset
+            self.ambientMonoid=ambientMonoid
+            self.__isPrincipal_bool =False
+            self.__isEmptyIdeal_bool=True
+        else:
+            self.__isEmptyIdeal_bool=False
+            for column in genset.T:
+                temp= ambientMonoid.isElement(column[np.newaxis].T)
+                if not (temp.dimensions()[0]):
+                    #If there is no solution
+                    raise ValueError("[Error]: A generator "+np2d_to_string(column[np.newaxis].T)+" is not in the ambient monoid.")
+            #Initialize member variables.
+            self.ambientMonoid = ambientMonoid
+            self.gens = self.__mingens(genset)
+            if self.gens.shape[1] == 1:
+                self.__isPrincipal_bool = True
+            else:
+                self.__isPrincipal_bool= False
+        # Now we set hashstring for ideal.
+        self.hashstring = np2d_to_string(self.gens)+'&'+self.ambientMonoid.hashstring
+        # Declare variable for future works, after standard cover is calculated.
+        self.isStdCoverCalculated = False;
+        self.isRadicalCalculated = False;
+        self.isPrimaryCalculated=False;
+        self.isIrreducibleCalculated=False;
+        self.isPrimeCalculated=False;
+        self.isOverlapCalculated=False;
+        self.isMaxOverlapCalculated=False;
+        self.isAssPrimeCalculated = False;
+        self.isIrrDecomPrimeCalculated = False;
+        self.__isRadical_bool = False;
+        self.__isPrimary_bool = False;
+        self.__isPrime_bool = False;
+        self.__isIrreducible_bool = False;
+    def isEmpty(self):
+        return self.__isEmptyIdeal_bool
+    def isPrincipal(self):
+        return self.__isPrincipal_bool
+    def isIrreducible(self):
+        """Return whether the ideal is irreducible or not."""
+        if self.isIrreducibleCalculated == True:
+            return self.__isIrreducible_bool
+        else:
+            max_overlaps = self.maximalOverlapClasses()
+            if len(max_overlaps.keys()) == 1:
+                for key, value in max_overlaps:
+                    if len(value) == 1:
+                        self.isIrreducibleCalculated = True
+                        self.__isIrreducible_bool = True
+                        return self.__isIrreducible_bool
+            self.isIrreducibleCalculated = True
+            self.__isIrreducible_bool = False
+            return self.__isIrreducible_bool
+    def isPrime(self):
+        """This method calculates whether the ideal is prime or not."""
+        if self.isPrimeCalculated:
+            return self.__isPrime_bool
+        else:
+            if (self.isRadical() == False):
+                self.__isPrime_bool = False;
+                return self.__isPrime_bool
+            if (self.isPrimary() == False):
+                self.__isPrime_bool = False;
+                return self.__isPrime_bool
+            unique_key=list(self.standardPairs.keys())[0]
+            if (len(self.standardPairs[unique_key]) == 1):
+                self.__isPrime_bool = True
+            else:
+                self.__isPrime_bool = False
+            self.isPrimeCalculated = True
+            return self.__isPrime_bool
+
+    def isPrimary(self):
+        """This method calculates whether the ideal is primary or not."""
+        if self.isPrimaryCalculated:
+            return self.__isPrimary_bool
+        else:
+            if (self.isStdCoverCalculated == False):
+                self.standardCover()
+            if (len(self.standardPairs) == 1):
+                self.__isPrimary_bool=True
+            else:
+                self.__isPrimary_bool=False
+            self.isPrimaryCalculated=True
+            return self.__isPrimary_bool
+    def isRadical(self):
+        """This method returns whether the given ideal is radical or not."""
+        if self.isRadicalCalculated:
+            return self.__isRadical_bool
+        else:
+            if (self.isStdCoverCalculated == False):
+                self.standardCover()
+            isRadical = True;
+            for face, pair_list in self.standardPairs.items():
+                for pair in pair_list:
+                    if np.any(pair.monomial) == True:
+                        isRadical = False
+            self.__isRadical_bool = isRadical
+            self.isRadicalCalculated= True;
+            return self.__isRadical_bool
+    def isElement(self, monomial):
+        """This method return whether given monomial is member of the ideal or not."""
+        if self.isEmpty():
+            return matrix(ZZ,0)
+        # Check whether the monomial has the same dimension with an affine integral spaces of ambient monoid.
+
+        if monomial.shape != np.transpose(self.gens[:,0][np.newaxis]).shape:
+            raise ValueError("[Error]: The dimension of a monomial not matched with the dimension of the ambient monoid.")
+        for column in self.gens.T:
+            idx=self.ambientMonoid.isElement(monomial-column[np.newaxis].T)
+            if idx.nrows(): #If index is nonempty, i.e., the given monomial is a generator + some element in the monoid,
+                return [idx.transpose(),column]
+        idx =matrix(ZZ,0)
+        return idx
+    def isStdMonomial(self,monomial):
+        """This method return whether given monomial is standard monomial or not."""
+        type_mat = type(matrix(ZZ,0))
+        if isinstance(monomial, type_mat):
+            monomial = np.array(monomial)
+        del type_mat
+        if self.isEmpty(): #If the ideal is a zero ideal
+            return True
+        if self.gens.shape[1]==0: #If the ideal is not a zero ideal
+            return True
+        if self.isElement(monomial):            
+            return False
+        else:
+            return True
+    def standardCover(self):
+        """ This method add standard cover as a variable. """
+        if self.isEmpty() == True:
+            top_face=tuple(list(range(self.ambientMonoid.gens.shape[1])))
+            zero_monomial = self.ambientMonoid.gens[:,(1,)]*0
+            self.standardPairs= {top_face:[properPair(zero_monomial,top_face,self)]}
+            self.isStdCoverCalculated = True
+            return self.standardPairs
+        if (self.isStdCoverCalculated == False):
+            self.standardPairs = standardPairs(self)
+            self.isStdCoverCalculated = True
+        return self.standardPairs
+    def overlapClasses(self):
+        if self.isOverlapCalculated == True:
+            return self.overlapClasses_dict
+        else:
+            self.overlapClasses_dict = findOverlapClasses(self.standardCover())
+            self.isOverlapCalculated = True
+            return self.overlapClasses_dict
+    def maximalOverlapClasses(self):
+        if self.isMaxOverlapCalculated:
+            return self.maxOverlapClasses
+        else:
+            classes = self.overlapClasses()
+            dict_classes = {}
+            for key,value in classes.items():
+                temp_list = [];
+                for pair_list in value:
+                # Notes that we only need to check the maximal w.r.t. divisibility 
+                # over one standard pair; then the other one should be a maximal, too.
+                    if pair_list[0].isMaximal():
+                        temp_list.append(pair_list)
+                dict_classes[key] = temp_list
+            self.maxOverlapClasses = dict_classes
+            self.isMaxOverlapCalculated = True
+            self.associatedFaces = list(self.maxOverlapClasses.keys())
+            return self.maxOverlapClasses
+    def associatedPrimes(self):
+        """return dictionary whose key is a face, and whose value is the prime ideal"""
+        if self.isAssPrimeCalculated == True:
+            return self.dict_associatedPrimeIdeals
+        if not self.isMaxOverlapCalculated:
+            self.maximalOverlapClasses()
+        top_face = (self.ambientMonoid.faceLattice.maximal_elements())[0]
+        associatedPrimeIdeals ={}
+        for face in self.associatedFaces:
+            complement = []
+            for ind in top_face:
+                if ind not in face:
+                    complement.append(ind)
+            tuple_complement = tuple(complement)
+            temp_ideal = monomialIdeal(self.ambientMonoid,self.ambientMonoid.gens[:,tuple_complement])
+            temp_ideal.standardPairs = {face:[properPair(0*self.ambientMonoid.gens[:,(0,)], face, temp_ideal)]}
+            temp_ideal.isStdCoverCalculated= True
+            associatedPrimeIdeals[face]=[temp_ideal]
+        
+        self.dict_associatedPrimeIdeals = associatedPrimeIdeals
+        self.isAssPrimeCalculated = True
+        return self.dict_associatedPrimeIdeals
+    def multiplicity(self, an_ideal_or_face):
+        assPrimes = self.associatedPrimes()
+        if isinstance(an_ideal_or_face, monomialIdeal):
+            for counter, prime_ideal in enumerate(assPrimes):
+                if prime_ideal == an_ideal_or_face:
+                    ovlClasses = self.overlapClasses()
+                    return len(ovlClasses[self.associatedFaces[counter]])
+            raise ValueError("[Error]: Given ideal is not an associated prime")
+        if isinstance(an_ideal_or_face,tuple):
+            if an_ideal_or_face in self.associatedFaces:
+                ovlClasses = self.overlapClasses()
+                return len(ovlClasses[an_ideal_or_face])
+            raise ValueError("[Error]: Given face is not an associated face")
+        raise ValueError("[Error]: Given parameter is not either an ideal or a face")
+    def irreducibleComponent(self, face,ov_class):
+        """This will be the part of the function irreducible decomposition
+        returns an irreducible component corresponds to a maximal overlap class.
+        Notes that face must be matched with face of the given overlap class."""
+        zero_ideal = monomialIdeal(self.ambientMonoid, np.array([[]]).T)
+        if self.isIrreducible() == True:
+            return [self]
+        # For each max overlap class,
+        # Collect all starting monomial of pairs in the max_ov_class
+        testing_monomials = [pair.monomial for pair in ov_class]
+        # Find its minimal solution over the generators.
+        minsol = [self.ambientMonoid.isElement(monomial) for monomial in testing_monomials]
+        sub_pairs =[]
+        for mat in minsol:
+            for ind in range(mat.nrows()):
+                #Generate all coordinatewisely less elements which divides the monomial.
+                # And make them as a pairs.
+                temp_list = [list(range(mat[ind][jnd]+1)) for jnd in range(mat.ncols())]
+                C = cartesian_product(temp_list)
+                Cart_prod = [np.reshape(np.array(list(mono)), (len(mono),1) ) for mono in C.list()]
+                sub_monomials = unique_np_arrays([np.matmul(self.ambientMonoid.gens,mono) for mono in Cart_prod])
+                sub_pairs = sub_pairs+[properPair(mono, face, zero_ideal) for mono in sub_monomials]
+        new_cover = standard_cover({face:sub_pairs}, zero_ideal)
+        return stdcover_to_ideal(new_cover, self.ambientMonoid)
+
+    def irreducibleDecomposition(self):
+        """Gives the a list of irreducible component as an ideal."""
+        if self.isIrrDecomPrimeCalculated ==True:
+            return self.irreducibleDecomIdeals
+        if self.isIrreducible() == True:
+            self.irreducibleDecomIdeals = [self]
+            self.isIrrDecomPrimeCalculated =True
+            return self.irreducibleDecomIdeals
+        max_overlaps = self.maximalOverlapClasses()
+        ideals=[]
+        for face, ov_classes in max_overlaps.items():
+            for ov_class in ov_classes:
+                ideals.append(self.irreducibleComponent(face,ov_class))
+        self.irreducibleDecomIdeals= ideals
+        self.isIrrDecomPrimeCalculated =True
+        return self.irreducibleDecomIdeals
+    def intersect(self,other):
+        if not isinstance(other, monomialIdeal):
+            raise ValueError("[Error] The parameter is not an ideal")
+        if self.ambientMonoid != other.ambientMonoid:
+            raise ValueError("[Error] Two ideal are from distinct affineMonoid objects")
+        zero_ideal = monomialIdeal(self.ambientMonoid, np.array([[]]).T)
+        cover = self.standardCover()
+        o_cover = other.standardCover()
+        keys = list(set(list(cover.keys()) +list(o_cover.keys())))
+        new_cover={}
+        for key in keys:
+            if (key in cover.keys()) and (key in o_cover.keys()):
+                value = [ properPair(pair.monomial, pair.face, zero_ideal) for pair in cover[key]]
+                o_value = [ properPair(pair.monomial, pair.face, zero_ideal) for pair in o_cover[key]]
+                new_cover[key] = unique_pairs(value+o_value)
+            elif (key in cover.keys()) and (key not in o_cover.keys()):
+                new_cover[key] = [ properPair(pair.monomial, pair.face, zero_ideal) for pair in cover[key]]
+            elif (key not in cover.keys()) and (key in o_cover.keys()):
+                new_cover[key] = [ properPair(pair.monomial, pair.face, zero_ideal) for pair in o_cover[key]]
+        return stdcover_to_ideal(new_cover,self.ambientMonoid)
+    def save(self, path_of_file):
+        """Write information of the ideal object as a text file.
+        If it is saved well, then it returns 1"""
+        # If path_of_file starts with ~, change it as a Home directory.
+        if not isinstance(path_of_file,str):
+            raise ValueError("[Error]: The given instance is not a valid path")
+        if path_of_file[0] == '~':
+            path_of_file = str(Path.home())+path_of_file[1:]
+        with open(path_of_file,'w') as f:
+            f.write(self.save_txt())
+        f.close()
+        return 1
+    def save_txt(self):
+        """Write information of the ideal object as a string."""
+        text_info = "I\n"
+        # Write the ambient monoid
+        text_info = text_info+"Q\n"+np2d_to_string(self.ambientMonoid.gens)+"\n"
+        # Now write Ideal
+        text_info = text_info+"isEmptyIdeal\n"+str(int(self.isEmpty()))+"\n"
+        if self.isEmpty() == False:
+            #Write genset
+            text_info = text_info+"gens\n"+np2d_to_string(self.gens)+"\n"
+            #Write whether it has std cover or not.
+            text_info = text_info+"isStdCoverCalculated\n"+str(int(self.isStdCoverCalculated))+"\n"
+            if self.isStdCoverCalculated == True:
+                text_info = text_info+json_dump_cover(self.standardPairs)+"\n"
+            text_info = text_info+'isOverlapCalculated\n'+str(int(self.isOverlapCalculated))+"\n"
+            if self.isOverlapCalculated == True:
+                text_info= text_info+json_dump_overlapClasses(self.overlapClasses_dict)+"\n"
+            text_info = text_info+'isMaxOverlapCalculated\n'+str(int(self.isMaxOverlapCalculated))+"\n"
+            if self.isMaxOverlapCalculated == True:
+                text_info = text_info+json_dump_overlapClasses(self.maxOverlapClasses)+"\n"
+            text_info = text_info+'isAssPrimeCalculated\n'+str(int(self.isAssPrimeCalculated))+"\n"
+            if self.isAssPrimeCalculated == True:
+                str_assPrimes = {}
+                for key, value in self.dict_associatedPrimeIdeals.items():
+                    str_assPrimes[str(key)]=[an_ideal.save_txt() for an_ideal in value]
+                text_info = text_info+json.dumps(str_assPrimes)+"\n"
+            text_info = text_info+'isIrrDecomPrimeCalculated\n'+str(int(self.isIrrDecomPrimeCalculated))+"\n"
+            if self.isIrrDecomPrimeCalculated == True:
+                str_irrDecom = [an_ideal.save_txt() for an_ideal in self.irreducibleDecomIdeals]
+                text_info = text_info+json.dumps(str_irrDecom)
+        return text_info
+    def __mingens(self,genset):
+        """ This function returns a minimal generators of the given generators of an ideal.
+            This is private member; only call by generator.
+        """
+        #Check that if it is an empty (zero) ideal.
+        if (genset.shape[1]==0):
+            return genset
+        # Sort columns of genset by an ascending order of its norm.
+        ind_col=np.argsort(np.linalg.norm(genset,axis=0))
+        sorted_gens = (genset.T[ind_col]).T
+        # Check that if the ideal is nonproper.
+        if np.linalg.norm(sorted_gens.T[0])==0:
+            #Return the zero column only as a generator
+            return(np.transpose(sorted_gens.T[0][np.newaxis]))
+        #Because of for loop updates, we use the transposed one.
+        sorted_gens = sorted_gens.T
+        idx_for_gens=0
+        # To update our loop, we use while instead of for loop.
+        while idx_for_gens < sorted_gens.shape[0]-1:
+            # Pick a column which is the leftmost part.
+            column = sorted_gens[idx_for_gens]
+            #Fix all columns which are right of the chosen column in the genset.
+            temp_sorted_gens=np.delete(sorted_gens,list(range(idx_for_gens+1)),0)
+            #Initialize record for column indices.
+            death_note = [];
+            for idx, sub_column in enumerate(temp_sorted_gens):
+                #Given all columns which are right of the chosen column,
+                #Test weather Ax+column = sub_column has a nonnegative solution
+                if (self.ambientMonoid.isElement(np.transpose((sub_column-column)[np.newaxis]))).nrows() > 0:
+                    #If this has a solution,
+                    # Record the index of that subcolumn. Since we don't need it for generating the given ideal.
+                    death_note.append(idx_for_gens+idx+1)
+            #Delete all columns which are redundant (i.e., reachable by Ax+fixed column for some x.)
+            sorted_gens = np.delete(sorted_gens,death_note,0)
+            #Increase index for next choice.
+            idx_for_gens=idx_for_gens+1
+        return(sorted_gens.T)
+    def __str__(self):
+        return "An ideal whose generating set is \n"+np.array2string(self.gens)+""
+    def __repr__(self):
+        return str(self)
+    def __add__(self, other):
+        """ Addition of two ideals in the same ambient ring. It generates an ideal which contains both ideals."""
+        if self.isEmpty():
+            return other
+        if other.isEmpty():
+            return self
+        if self.ambientMonoid == other.ambientMonoid:
+            # Return a monomial ideal generated by generators of both ideals.
+            return monomialIdeal(self.ambientMonoid, np.concatenate((self.gens.T,other.gens.T)).T)
+        else:
+            raise ValueError("[ERROR]: Ambient monoids of two ideals are not the same.")
+    def __eq__(self, other):
+        if not isinstance(other, type(self)): return NotImplemented
+        return (self.hashstring == other.hashstring)
+    def __mul__(self,other):
+        if (self.isEmpty()):
+            return self
+        if (other.isEmpty()):
+            return other
+        if self.ambientMonoid == other.ambientMonoid:
+            # Return a monomial ideal generated by addition of generators of both ideals.
+            newgens=[]
+            for indone in range(self.gens.shape[1]):
+                for indtwo in range(other.gens.shape[1]):
+                    newgens.append(self.gens[:,indone] + other.gens[:,indtwo])
+            newgens = np.array(newgens).T
+            return monomialIdeal(self.ambientMonoid, newgens)
+
+#### class of proper pairs
+class properPair:
+    """ 
+    A class for a proper pair of a given ideal (and its ambient monoid).
+    Arguments:
+        np.ndarray(2D) monomial
+                A monomial for the pair. It is a column vector in 2D array.
+
+        tuple face
+                A face of the pair.
+        
+        monomialIdeal ambientIdeal
+                An amibent ideal where the pair is proper.
+        
+    Member Variables:
+        same as argument.
+        
+    Member Methods:
+    """
+    def __init__(self, monomial, face, ambientIdeal, properness=False):
+        if not isinstance(ambientIdeal,monomialIdeal):
+            raise ValueError("[Error]: The 3rd parameter is not a type of 'monomialIdeal'")
+        type_mat = type(matrix(ZZ,0))
+        if isinstance(monomial, type_mat):
+            monomial = np.array(monomial)
+        del type_mat
+        if not properness:
+            if ambientIdeal.ambientMonoid.isElement(monomial).nrows()==0:
+                raise ValueError("[Error]: The monomial is not in the ambient monoid.")
+            if not ambientIdeal.isStdMonomial(monomial):
+                raise ValueError("[Error]: The monomial is in the given monomial ideal.")
+        if not(face in ambientIdeal.ambientMonoid.faceLattice.list()):
+            raise ValueError("[Error]: Given tuple is not in the faces of the ambient monoid.")
+        # Check whether ideal is empty, or we ignore properness.
+        if ((ambientIdeal.isEmpty()) or (properness)):
+            self.monomial = monomial
+            self.face = face
+            self.ambientIdeal = ambientIdeal
+        else:
+            #Test that whether it is proper pair or not.
+            for column in ambientIdeal.gens.T:
+                # Check that monomial + face *x = column + Monoid element
+                if ambientIdeal.ambientMonoid.isIntersectionOfSubmonoid(monomial, face, column[np.newaxis].T, ambientIdeal.ambientMonoid.faceLattice.top()).nrows():
+                    # The reason for setting Warning is that it will be used as a status below.
+                    raise Warning("[Error]: This is not a proper pair of the given ideal.")
+            self.monomial = monomial
+            self.face = face
+            self.ambientIdeal = ambientIdeal
+        #Now set hashstring
+        self.hashstring = np2d_to_string(self.monomial)+"&"+ str(self.face)+"&"+self.ambientIdeal.hashstring
+
+        #Check maximality over the division
+        self.isMaximalWdivisibilityCalculated= False;
+        self.isMaximalWdivisibility= False;
+
+    def isMaximal(self):
+        """This works properly only if the ambient ideal is well-defined."""
+        if self.isMaximalWdivisibilityCalculated:
+            return self.isMaximalWdivisibility
+        else:
+            top_face = (self.ambientIdeal.ambientMonoid.faceLattice.maximal_elements())[0]
+            parity = 0; # Check whether we have proper pair divisible by given std pair.
+            for ind in top_face:
+                if ind not in self.face:
+                    # Get that column in gens.
+                    col = self.ambientIdeal.ambientMonoid.gens[:,ind]
+                    gen = np.reshape(col,(-1,len(col))).transpose()
+                    try:
+                        properPair(gen+self.monomial, self.face, self.ambientIdeal)
+                        self.isMaximalWdivisibility = False
+                        self.isMaximalWdivisibilityCalculated = True
+                        return self.isMaximalWdivisibility
+                    except:
+                        pass
+            self.isMaximalWdivisibility = True
+            self.isMaximalWdivisibilityCalculated = True
+            return self.isMaximalWdivisibility
+    def isElement(self, a_monomial):
+        """ This get a monomial vector as a numpy's 2D column vector (n x 1), and check it is in the pair or not.
+        """
+        type_mat = type(matrix(ZZ,0))
+        if isinstance(a_monomial, type_mat):
+            a_monomial = np.array(a_monomial)
+        del type_mat
+        if not isinstance(a_monomial, np.ndarray):
+            raise ValueError("[Error]: Given input is not a numpy or sage.matrix object")
+        if len(a_monomial.shape)!=2:
+            raise ValueError("[Error]:The given input is not a 2D-array")
+        else:
+            if a_monomial.shape[1]!=1:
+                raise ValueError("[Error]:The vector is not a column vector")
+        # If face is zero, then just check whether it the same as monomial or not.
+        if self.face == ():
+            if np.any(self.monomial-a_monomial) == False:
+                # Then they are the same
+                return matrix(ZZ,[0])
+            else:
+                return matrix(ZZ,0)
+        # Check that given monomial is the member of ambient monoid.
+        if np.array(self.ambientIdeal.ambientMonoid.isElement(a_monomial)).size == 0:
+            return matrix(ZZ,0)
+
+        #Notes that we intentionally not check whether the monomial is in
+        #ambient ideal, since ideal of pair's not defined well in some cases.
+
+        # Make a matrix B=[A;A]
+        # A: submonoid generated by faces.
+        A = self.ambientIdeal.ambientMonoid.gens[:,self.face]
+        B=np.concatenate((A,A))
+        # Transpose a 2D column vector into 1D vector.
+        vector = a_monomial-self.monomial
+        vector=vector.flatten()
+        # sign for zsolve
+        # If B is n x m matrix, then sgn is m x 1 matrix whose entries are 1.
+        # 1 implies that solution should be nonnegative.
+        sgn = [1 for column in B.T]
+        # relation for zsolve.
+        # What we have is [<=; >=], which is needed to solve an integer equation.
+        rel=['<'] * self.monomial.shape[0] + ['>']*self.monomial.shape[0]
+        # Solve it using zsolve.
+        result=four_ti_2.zsolve(B.tolist(), rel, vector.tolist()+vector.tolist(), sgn)
+        # By transforming the solution, what we have is
+        # [Given Face]* a column of return_sol +self.monomial = a_monomial
+        return_sol = result[0].transpose()
+        inf_sol = result[2]
+        del result
+        # Notes that result[0]: Inhomogeneous solution Bx = [vector;vector]
+        # result[1]: Homogeneous solution Bx=0
+        # result[2]: Affine monoid whose solution set lives in
+        if inf_sol: #If solution is infinite,
+            raise ValueError("[Error]: Solution space is not finite, which is impossible in this case.")
+        return return_sol
+    def __str__(self):
+        return "("+str(self.monomial.tolist())+"^T,"+str((self.ambientIdeal.ambientMonoid.Face(self.face)).tolist())+")"
+    def __repr__(self):
+        return str(self)
+    def __eq__(self, other):
+        if not isinstance(other, type(self)): return NotImplemented
+        return (self.hashstring == other.hashstring)
+
+#### Uniqueness and comparison of lists or covers.
+def unique_monoids(list_of_monoids):
+    """ Added to recover an affine monoid with original generators."""
+    if not isinstance(list_of_monoids, list):
+        raise ValueError('[Error]: Given instance is not a list.')
+    for item in list_of_monoids:
+        if not isinstance(item,affineMonoid):
+            raise ValueError('[Error]: The given list contains an element which is not affine monoid.')
+    return unique_affine_monoid_classes(list_of_monoids)
+def unique_pairs(list_of_pairs):
+    """ Added to recover a proper pair with original generators."""
+    if not isinstance(list_of_pairs, list):
+        raise ValueError('[Error]: Given instance is not a list.')
+    for item in list_of_pairs:
+        if not isinstance(item,properPair):
+            raise ValueError('[Error]: The given list contains an element which is not a proper pair.')
+    return unique_affine_monoid_classes(list_of_pairs)
+def unique_ideals(list_of_ideals):
+    """ Added to recover an ideal with original generators."""
+    if not isinstance(list_of_ideals, list):
+        raise ValueError('[Error]: Given instance is not a list.')
+    for item in list_of_ideals:
+        if not isinstance(item,monomialIdeal):
+            raise ValueError('[Error]: The given list contains an element which is not an ideal.')
+    return unique_affine_monoid_classes(list_of_ideals)
+def unique_affine_monoid_classes(list_of_classes):
+    """ This function should be called by one of three methods."""
+    hash_list = [item.hashstring for item in list_of_classes]
+    unique_hash_list = list(set(hash_list)) # Find unique hash lists.
+    new_list = []
+    for hashstring in unique_hash_list:
+        try:
+            new_list.append(list_of_classes[hash_list.index(hashstring)])
+        except:
+            pass        
+    return new_list
+def unique_np_arrays(list_of_np_array):
+    """Given a list of numpy 2d array with the same shape, return the unique ones"""
+    if not isinstance(list_of_np_array, list):
+        raise ValueError("[Error]: Given argument is not a list")
+    for ind in list_of_np_array:
+        if not isinstance(ind,np.ndarray):
+            raise ValueError("[Error]: List contains non-np.array")
+    sh = list_of_np_array[0].shape
+    for ind in list_of_np_array:
+        if ind.shape != sh:
+            raise ValueError("[Error]: Given numpy array has distinct shapes")
+    list_of_strings = list(set([np2d_to_string(item) for item in list_of_np_array]))
+    return [string_to_np2d(item) for item in list_of_strings]
+
+#### Methods on ideals or pairs
+def divides(pair_a, pair_b):
+    """If self=(a,F) divides other=(b,G), then return c where a+c+NF subseteq b+NG.
+
+        If two pairs are not comparable, gives a warning message and return an empty matix.
+           
+        Warning: In case of two faces are the same, then we determine it by coordinatewise
+        lexicographical order. However, this need proof.
+    """
+    if not isinstance(pair_a,properPair):
+        raise ValueError("[Error]: The 1st parameter is not a type of 'properPair'")
+    if not isinstance(pair_b,properPair):
+        raise ValueError("[Error]: The 2nd parameter is not a type of 'properPair'")
+    if pair_a.ambientIdeal != pair_b.ambientIdeal:
+        raise ValueError("[Error]: Two has different ambient ideals")
+    tfone=pair_a.ambientIdeal.ambientMonoid.faceLattice.is_lequal(pair_a.face, pair_b.face)
+    if (not tfone):
+        #Not divisible
+        return np.array([])
+    else:
+        #Get an index of the whole monoid as a face
+        temp_face= pair_a.ambientIdeal.ambientMonoid.IndFace(pair_a.ambientIdeal.ambientMonoid.gens)
+        #Generate a pair (self.monomial, ambientMonoid, zero ideal)
+        return pair_a.ambientIdeal.ambientMonoid.isIntersectionOfSubmonoid(pair_a.monomial,temp_face, pair_b.monomial,pair_b.face)
+def radicalIdeal(an_ideal):
+    """Find a radical ideal of given ideal"""
+    if not isinstance(an_ideal, monomialIdeal):
+        raise ValueError('[Error]: The given instance is not an ideal')
+    if an_ideal.isRadical() == True:
+        print("It is already a radical ideal.")
+        return(an_ideal)
+    SubCpx = [];
+    stdpair_for_radical={}
+    for face, pair_list in an_ideal.standardPairs.items():
+        for pair in pair_list:
+            if np.any(pair.monomial) == False:
+                 SubCpx.append(face)
+                 stdpair_for_radical[face]=[pair]
+    
+    GensInSubCpx = [];
+    for tup in SubCpx:
+        for ind in tup:
+            GensInSubCpx.append(ind)
+    GensInSubCpx = list(set(GensInSubCpx))
+    # Now set the variable saving generators
+    GensOfRadical =[];
+    # First of all, put all rays outside of the subcomplex.
+    for ind in range(an_ideal.ambientMonoid.gens.shape[1]):
+        if ind not in GensInSubCpx:
+            GensOfRadical.append((ind,))
+    # Now, put all sums of generators outside of the subcomplex
+    CombOfGensInSubCPX = Combinations(GensInSubCpx)
+    for comb in CombOfGensInSubCPX:
+        parity_tup = False
+        for tup in SubCpx:
+            if set(comb).issubset(set(tup)):
+                parity_tup = True
+        if parity_tup == False:
+            GensOfRadical.append(comb)
+    #Lastly, return the monomial ideal with standard pairs.
+    GenSet=[]
+    for GenList in GensOfRadical:
+        GenSet.append(sumColumn(an_ideal.ambientMonoid.gens[:,GenList]))
+    returning_ideal = monomialIdeal(an_ideal.ambientMonoid ,np.concatenate(GenSet,axis=1))
+    returning_ideal.isStdCoverCalculated = True;
+    returning_ideal.standardPairs = stdpair_for_radical
+    return returning_ideal
+
+#### Methods on covers of pairs.
+def cover_difference(cover,new_cover):
+    difference_cover = {}
+    for key in cover:
+        if key in new_cover.keys():
+            # Change hash string not including ideal information
+            hash_cover =[pair_hash_wo_ideal(pair) for pair in cover[key]]
+            hash_new_cover=[pair_hash_wo_ideal(pair) for pair in new_cover[key]]
+            if set(hash_cover) != set(hash_new_cover):
+                diff_list = list(set(hash_new_cover).difference(set(hash_cover)))
+                ind_list = [hash_new_cover.index(hashstr) for hashstr in diff_list]
+                ind_list.sort()
+                difference_cover[key] = [new_cover[key][ind] for ind in ind_list]
+    return difference_cover
+def intersection_std_covers(dictone,dicttwo):
+    """Given two dictionary with standard pairs, return their intersection."""
+    if not (isinstance(dictone,dict) and isinstance(dicttwo,dict)):
+        raise ValueError("[Error]:One of the argument is not dictionary.")
+    inter = list(dictone.keys() & dicttwo.keys())
+    returning_dict = {}
+    for key in inter:
+        hashs_of_dictone = set([pair.hashstring for pair in dictone[key]])
+        hashs_of_dicttwo = set([pair.hashstring for pair in dicttwo[key]])
+        intersection_hashs = list(hashs_of_dictone & hashs_of_dicttwo)
+        list_of_pairs = unique_pairs(dictone[key]+dicttwo[key])
+        returning_pairs =[]
+        for pair in list_of_pairs:
+            if (pair.hashstring in intersection_hashs):
+                returning_pairs.append(pair)
+        if returning_pairs:
+            returning_dict[key]=returning_pairs
+    return returning_dict
+
+#### Methods for finding overlap classes from a cover of pairs.
+def overlapPairs(a_pair,list_of_pairs):
+    """Given a pair P and list of pairs L, return a list of pairs in L which overlap P."""
+    if not isinstance(a_pair, properPair):
+        raise ValueError('[Error]: Given the first instance is not a proper pair')
+    if not isinstance(list_of_pairs,list):
+        raise ValueError('[Error]: Given the second instance is not a list')
+    if not list_of_pairs:
+        #list of pairs is empty
+        return([a_pair])
+    for pair in list_of_pairs:
+        if (not isinstance(pair, properPair)) or (pair.ambientIdeal.ambientMonoid != a_pair.ambientIdeal.ambientMonoid):
+            raise ValueError('[Error]: Given list of pairs contain an element which is either not proper pair or a proper pair with distinct ambient monoid.')
+    # If a_pair is pair with zero face, then return it; it cannot be overlap with other standard pairs.
+    if (a_pair.face == ()):
+        return [a_pair]
+    overlap_classes=[a_pair] #Initialize the returnign list.
+    for pair in list_of_pairs:
+        # Compare two pairs.
+        # Here we care about whether two pairs has overlapped part or not.
+        result = a_pair.ambientIdeal.ambientMonoid.isIntersectionOfSubmonoid(a_pair.monomial,a_pair.face, pair.monomial, pair.face)
+        if result:
+            # Result is not empty;
+            overlap_classes.append(pair)
+    return overlap_classes 
+
+def findOverlapClasses(cover):
+    """ This is the implementation of overlap classes; used only 
+    for internally in monomialIdeal class object or standard cover object
+    Do not use otherwise, since it lacks error checking code."""
+    new_cover ={}
+    for key, value in cover.items():
+        if len(value) <= 1:
+            new_cover[key]=[value]
+        else:
+            list_of_overlaps =[]
+            # Copy variables to delete it freely.
+            new_list = [ind for ind in value]
+            while len(new_list)>0:
+                fixed_pair = new_list[0]
+                del new_list[0]
+                overlap_class =unique_pairs(overlapPairs(fixed_pair,new_list))
+                for pair in overlap_class:
+                    if pair in new_list:
+                        new_list.remove(pair)
+                list_of_overlaps.append(overlap_class)
+            new_cover[key]=list_of_overlaps
+    return new_cover
+
+def findMaximalOverlapClassesInCover(classes,cover):
+    """ This is an implementation of maximalOverlap Classes over a given cover; 
+    used only for stdcover_to_ideal."""
+    dict_classes = {}
+    for key,value in classes.items():
+        max_list = [];
+        # It may be poset; that's why we need O(n^2) algorithm
+        for pair_a in value:
+            parity = True
+            for pair_b in value:
+                #Check whether pair_b is divisible by pair_a
+                #In case they are not the same.
+                if pair_hash_wo_ideal(pair_a[0]) != pair_hash_wo_ideal(pair_b[0]):
+                    if divides(pair_a[0],pair_b[0]):
+                        parity = False
+                        break;
+            if parity == True:
+                max_list.append(pair_a)
+        dict_classes[key]=max_list
+    return dict_classes
+   
+
+#### Theorem 4.1
+def pair_difference(pair_a, pair_b):
+    """This is an implementation of Theorem 4.1 in https://arxiv.org/abs/2005.10968
+    
+        Argument
+            properPair 
+                pair_a, pair_b 
+                    restriction:
+                    1)The face of pair_a must be contained in the face of pair_b.
+        Output
+            list
+                collection
+                    An element of this list is proper pairs (a,F) such that 
+                        1) F is contained in the face of pair_a
+                        2) Union of all elements equal to pair_a - pair_b
+
+    """
+    
+    if (not isinstance(pair_a,properPair)) or (not isinstance(pair_b,properPair)):
+        raise ValueError("[Error]: At least one of the argument is not a proper pair.")
+    if pair_a.ambientIdeal.ambientMonoid != pair_b.ambientIdeal.ambientMonoid:
+        raise ValueError("[Error]: Two pairs have different ambient monoid")
+        # Notes that ambient ideal may be distinct.
+    if  (not pair_a.ambientIdeal.ambientMonoid.faceLattice.is_lequal(pair_a.face, pair_b.face)):
+        raise ValueError("[Error]: The face of 1st argument is not less than or equal to that of 2nd argument.")
+    if (pair_a.ambientIdeal.ambientMonoid.isPointed() == False):
+        raise ValueError("[Error]: An affine monoid is not pointed, hence it does not work.")
+    ### Before going on, if faces of both pairs are zero,
+    if (pair_a.face == ()):
+        #Check whether pair_a.monomial is the member of pair_b or not
+        if np.array(pair_b.isElement(pair_a.monomial)).size >0 :
+            return {}
+        else:
+            # return pair_a
+            return {pair_a.face:[pair_a]}
+
+    # If pair_a = (a,F), pair_b=(b,G), with nonzero F,G, then solve
+    # a+u*F = b+v*G for u and v
+    # as a form
+    # [F;-G][u;v] = b-a
+    minsol = pair_a.ambientIdeal.ambientMonoid.isIntersectionOfSubmonoid(pair_a.monomial, pair_a.face, pair_b.monomial, pair_b.face)
+    #Determine whether transpose it or not.
+    shape_of_face_a=(pair_a.ambientIdeal.ambientMonoid.Face(pair_a.face)).shape
+    #Reduce minsol = [F;-G] to [F] if F is nonzero
+    if shape_of_face_a[1] == 0:
+        # In case of pair_a.face != (),
+        if minsol:
+            #minsol exists => pair_a.monomial is contained in pair_b
+            return {}
+        else:
+            return {pair_a.face:[pair_a]}
+    else:
+        minsol=minsol[range(minsol.nrows()),range(shape_of_face_a[1])]
+    if minsol.nrows()>0: # If minimal solution exists
+        # Get a standard pair of J in k[N^pair_a.face]
+        stdpair_J=stdPairs_poly_ring(minsol.ncols(), minsol)
+        # Result, a cover in paper, is a dictionary whose key is a face of ambient monoid
+        # and whose value is set of pairs sharing faces.
+        result={face:[] for face in pair_a.ambientIdeal.ambientMonoid.faceLattice.list()}
+        for idx in stdpair_J:
+            # generate b+ Gu in the paper
+            u= idx[0][np.newaxis].T
+            #u=(np.array([pair_a.face[index] for index in idx[0]]))[np.newaxis].T
+            G=pair_a.ambientIdeal.ambientMonoid.Face(pair_a.face)
+            newmonomial=pair_a.monomial+np.matmul(G,u)
+            # generate N{a_i: i in sigma} in the paper
+            newface=tuple(sorted(tuple([pair_a.face[index] for index in idx[1]])))
+            result[newface].append(properPair(newmonomial, newface, pair_a.ambientIdeal, True))
+        for face in pair_a.ambientIdeal.ambientMonoid.faceLattice.list():
+            if not result[face]:
+                del result[face]
+        # Change lists in result on set
+        return {key:unique_pairs(val) for key,val in result.items()}
+    else:
+        return({pair_a.face:[pair_a]})
+def stdPairs_poly_ring(numvar, genset):
+    """ Given a generating set of a polynomial ring, return standard pairs using Macaulay2
+    This is a subroutine of Theorem 4.1 in https://arxiv.org/abs/2005.10968
+        Arguments:
+            int numvar : Number of variables of the polynomial ring
+            numpy (2d)Array or sage matrix 
+                genset : A matrix whose row represent an exponent notation of the given polynomial ring.
+        Return
+            list(list) int_result: List of standard pairs.
+    """
+    if not isinstance(numvar,int):
+        raise ValueError("1st argument is not an integer.")
+    #Generate Poly ring with numvar variables
+    gens_poly_ring='R=ZZ[vars (0..'+str(numvar-1)+')]'
+    macaulay2(gens_poly_ring)
+    # Generate ideal whose generator corresponds to a row of generating set.
+    gens_ideal='I=monomialIdeal(';
+    for row in genset:
+        eq=''
+        for idx in range(numvar):
+            eq=eq+'R_'+str(idx)+'^'+str(row[idx])+'*'
+        # Delete last +
+        eq = eq[:-1]
+        gens_ideal=gens_ideal + eq+','
+    gens_ideal=gens_ideal[:-1] + ')'
+    macaulay2(gens_ideal)
+    # Find standard pair of ideal.
+    macaulay2('L=standardPairs I')
+    # Translate lists in Macaulay2 for python.
+    result=list(macaulay2('T=apply(L, i -> {(exponents i_0)_0, apply(i_1, j -> index j)})'))
+    result = [list(i) for i in result]
+    result = [ [list(i[0]), list(i[1])] for i in result]
+    int_result=[]
+    for i in result:
+        temp=[];
+        for j in i[0]:
+            temp.append(int(j))
+        temp = np.array(temp)
+        tempt = [];
+        for j in i[1]:
+            tempt.append(int(j))
+        int_result.append([temp,tempt])
+    return int_result
+
+#### Lemma 4.2
+def minsol_of_intersection(vector, face, affine_monoid):
+    """ Given a vector and face, find the minimal element of intersection of (vector+ RR* face) and affine_monoid 
+    This is an implementation of Lemma 4.2 in https://arxiv.org/abs/2005.10968
+        Arguments:
+            numpy (2D array) vector: a column integer vector
+            affineMonoid affine_monoid: an affine monoid having the vector as an element.
+            tuple face : a face of the affine_monoid
+        
+        Return:
+            sage.matrix
+                result[0]: Minimal solution of the intersection between (vector+ RR* face) and affine_monoid.
+            
+    
+    """
+    #Genset may numpy 2d array or sage 2d matrix with integer.
+    #Preprocess
+    if len(vector.shape) !=2:
+        raise ValueError("1st argument must be a column vector of 2D array.")
+    if vector.shape[1] !=1:
+        raise ValueError("1st argument must be a column vector of 2D array.")
+    if not isinstance(affine_monoid,affineMonoid):
+        raise ValueError("3rd argument is not a class of 'affineMonoid.''")
+    if not( face in affine_monoid.faceLattice.list()):
+        raise ValueError("2nd argument is not a face of 3rd argument.")
+    
+    HVector = affine_monoid.integralSupportVectors[face]
+    HV_times_gens = np.matmul(HVector, affine_monoid.gens)
+    # Make a matrix B=[A;A]
+    B=np.concatenate((HV_times_gens,HV_times_gens))
+    #RHS : [HVector times given vector;HVector times given vector]
+    rhs = np.matmul(HVector,vector).flatten()
+    # sign for zsolve
+    # If B is n x m matrix, then sgn is m x 1 matrix whose entries are 1.
+    # 1 implies that solution should be nonnegative.
+    sgn = [1 for column in B.T]
+    # relation for zsolve.
+    # What we have is [<=; >=], which is needed to solve an integer equation.
+    #print(int(B.shape[0]/2))
+    rel_num=int(B.shape[0]/2)
+    rel=['<'] * rel_num + ['>']* rel_num
+    # Solve it using zsolve.
+    result=four_ti_2.zsolve(B.tolist(), rel, rhs.tolist()+rhs.tolist(), sgn)
+    return result[0]
+
+#### Proposition 4.4
+def cover_to_stdPairs(cover, ambientIdeal, loop_max=100):
+    """This is an implementation of Proposition 4.4 of https://arxiv.org/abs/2005.10968"""
+    new_cover={}
+    loop_num=0
+    parity=0
+    while (parity == 0) and (loop_num<loop_max):
+        new_cover=czero_to_cone(cover,ambientIdeal)
+        new_cover=cone_to_ctwo(new_cover,ambientIdeal)
+        # Now compare two covers.
+        loop_num = loop_num+1
+        if len(cover_difference(cover,new_cover))==0:
+            parity=1
+        else:
+            cover = new_cover
+    if (loop_num == loop_max):
+        raise Warning("[Warning]: # of loops exceed the maximum,", loop_max, ". If you want to still continue, give some larger number as 3rd instance.")
+    #If stabilizes, then take the maximal elements.
+    max_cover = standard_cover(new_cover,ambientIdeal)
+    return max_cover
+
+#C_0 to C_1
+def czero_to_cone(cover, ambientIdeal):
+    """This is the 1st subroutine of Proposition 4.4 of https://arxiv.org/abs/2005.10968"""
+    new_cover={}
+    for face, pair_set in cover.items():
+        pair_list = list(pair_set)
+        new_list=[]
+        for pair in pair_list:
+            minsol=minsol_of_intersection(pair.monomial, pair.face, pair.ambientIdeal.ambientMonoid)
+            result=np.matmul(pair.ambientIdeal.ambientMonoid.gens, minsol.transpose().numpy()).T                
+            # Use monomials in minsol which divides the original monomial
+            new_result=[ vector[np.newaxis].T for vector in result if pair.ambientIdeal.ambientMonoid.isElement(pair.monomial-vector[np.newaxis].T).nrows() >0 ]
+            result=new_result
+            for column in result:
+                if not np.array_equal( column, pair.monomial):
+                    new_list.append(properPair(column, face, pair.ambientIdeal,True))
+                else:
+                    new_list.append(pair)
+        new_cover.update({face:unique_pairs(new_list)})
+    return new_cover
+#C_1 to C_2
+def cone_to_ctwo(new_cover, ambientIdeal):
+    """This is the 2nd subroutine of Proposition 4.4 of https://arxiv.org/abs/2005.10968"""
+    renew_cover={}
+    # This is new pair list, which we will store for return
+    new_pair_list=[]
+    used_faces = set([])
+    # To avoid repeated calculation, just sort all items in the cover by monomials and its related face.
+    monomial_face_dict={}
+    for face, pair_list in new_cover.items():
+        for pair in pair_list:
+            if np2d_to_string(pair.monomial) not in monomial_face_dict.keys():
+                monomial_face_dict[np2d_to_string(pair.monomial)]=[face]
+            else:
+                monomial_face_dict[np2d_to_string(pair.monomial)].append(face)
+    # Now use that monomial_face_dict to make it much more conveniently.
+    #print("C1->C2, given new_cover:",new_cover)
+    #print("C1->C2, monomial_face_dict:",monomial_face_dict)
+
+    for monomial, list_of_faces in monomial_face_dict.items():
+        #Find complement of downsets.
+        complement = complement_of_down_set(list_of_faces, ambientIdeal.ambientMonoid)
+        # Sort it by length of tuples
+        complement.sort(key=len, reverse = True)
+        # Store possible faces for avoiding duplicates
+        possible_faces=[]
+        # Now try to generate proper pair of the ambientIdeal for each faces in the complement.
+        for face in complement:
+            # Check that whether the given face is contained in a face which are possible to make properpair
+            is_face_contained_in_possible_face=False
+            for item in possible_faces:
+                if set(face).issubset(set(item)):
+                    is_face_contained_in_possible_face=True
+            # If the given face is not contained in one of possible faces,
+            if (not is_face_contained_in_possible_face):
+                try:
+                    temp_pair=properPair(string_to_np2d(monomial),face,ambientIdeal)
+                    possible_faces.append(face)
+                    del temp_pair
+                except Warning:
+                    pass
+        # Add original faces in the possible_faces
+        possible_faces = possible_faces+list_of_faces
+        # Find maximal elements of possible faces as a subposet.
+        maximal_faces=(ambientIdeal.ambientMonoid.faceLattice.subposet(possible_faces)).maximal_elements()
+        used_faces = used_faces.union(set(maximal_faces))
+        # Now save it in new_pair_list
+        for face in maximal_faces:
+            new_pair_list.append(properPair(string_to_np2d(monomial), face, ambientIdeal))
+            
+    # So now we generate all new_pair_lists. 
+    # Sort it as a form of cover dictionary.
+    for item in new_pair_list:
+        if item.face not in renew_cover.keys():
+            renew_cover.update({item.face: [item]})
+        else:
+            renew_cover[item.face].append(item)
+    #Lastly delete repeated ones.
+    returning_cover = {key:unique_pairs(val) for key, val in renew_cover.items()}
+    #print("C1->C2, returning_cover:",returning_cover)
+    return returning_cover
+
+def standard_cover(cover, ambientIdeal):
+    """ This is 3rd subroutine of Proposition 4.4 of https://arxiv.org/abs/2005.10968
+        Argument:
+            dict cover {face: set(properPair...)}
+                A cover of properPairs.
+            monomialIdeal ambientIdeal
+                An ambient ideal which has all proper pairs in the cover as proper pair.
+        
+        Return
+            dict new_dict {face:list(properPair...)}
+                A dictionary of all standard pairs in the given cover.
+        
+    """
+    if not isinstance(cover, dict):
+        raise ValueError("[Error]: The instance is not a type of dictionary")
+    A = ambientIdeal.ambientMonoid
+    new_dict={}
+    for face, pair_set in cover.items():
+        pair_list = list(pair_set)
+        if not (face in A.faceLattice.list()):
+            raise ValueError("[Error]: Given face in a dictionary is not a face of ambient monoid")
+        for i in pair_list:
+            if i.ambientIdeal != ambientIdeal:
+                raise ValueError("[Error]: \n",i ,"\n is not a pair of the given ambient ideal.")
+        HVector=A.integralSupportVectors[face]
+        H_coordinate=[np.matmul(HVector,i.monomial).flatten() for i in pair_list]
+        # Find unique H coordinates.
+        unique_H_coord=[ np.array(i)  for i in set(map(tuple, H_coordinate))]
+        # List for non-standard pairs
+        updated_list=[];
+        for arr in unique_H_coord:
+            #Find a duplicaed list
+            tf_list = []
+            # Now given truth check of H-coordinates
+            for i in (H_coordinate==arr):
+                #If all H-coordinates do not agree with given coordinate,
+                if i.all()==False:
+                    tf_list.append(0)
+                else:
+                    tf_list.append(1)
+            if sum(tf_list)>1:
+                #If there is at least two elements whose H-coordinates are the same,
+                #Generate indices of those elements,
+                idx=[i for i, x in enumerate(tf_list) if x == 1]
+                # Generate new list of these pairs with the same H-coordinates.
+                specific_pairs = [pair_list[i] for i in idx]
+                #Here we generate a digraph whose vertices are index of specific_pairs, and
+                #whose edges are order relation.
+                list_of_vertices = [i for i in range(len(specific_pairs))]
+                list_of_edges = []
+                #Storing variable for pairs within the same overlap classes.
+                overlap_classes=[] # We order it by jdx.
+                #Generate combination of elements.
+                for jdx in range(len(specific_pairs)-1):
+                    for kdx in range(len(specific_pairs)-jdx-1):
+                        #Compare two sets.
+                        # Notes that if a pair_a contains pair_b, then isIntersectionOfSubmonoid(pair_a,pair_b)
+                        # returns [nonzero half part, zero half part]. (Likewise, if pair_b contains pair_b, then
+                        # it returns [zero half part, nonzero half part].)
+                        n_kdx = kdx+jdx+1
+                        #Compare two pairs
+                        first = specific_pairs[jdx].isElement(specific_pairs[n_kdx].monomial)
+                        second = specific_pairs[n_kdx].isElement(specific_pairs[jdx].monomial)
+
+                        if (first.numpy().size > 0) and (second.numpy().size >0): 
+                            check_whether_stored=False
+                            for ldx in range(len(overlap_classes)):
+                                # If there is already a list of overlapped class which contains one of the pair, append another.
+                                if (jdx in overlap_classes[ldx]):
+                                    overlap_classes[ldx].append(n_kdx)
+                                    check_whether_stored=True
+                                if (n_kdx in overlap_classes[ldx]):
+                                    overlap_classes[ldx].append(jdx)
+                                    check_whether_stored=True
+                            if check_whether_stored == False:
+                                # If the above process do not store these overlapped pairs, make new overlapped class.
+                                overlap_classes.append([jdx, n_kdx]) #Here order matters, for deleting cycles.
+                                #Comment: if we have j_0 <j_1< cdots < j_k pairs in the same overlap classes,
+                                # then loop will be given as (j_0, j_1), cdots (j_0, j_1), (j_1,j_2), cdots
+                                # Thus, j_0 should be in the first element of a sublist of overlap_classes.
+                                # This fact will be used to contracting digraph.
+                                list_of_edges.append((n_kdx,jdx))
+                                list_of_edges.append((jdx,n_kdx))
+                        elif (first.numpy().size > 0) and (second.numpy().size == 0):
+                            #If first matrix is nonempty, i.e., pair[jdx] contains pair[n_kdx] i.e., pair[n_kdx] divides pair[jdx]
+                            list_of_edges.append((n_kdx,jdx))
+                        elif (first.numpy().size == 0) and (second.numpy().size > 0):
+                            #If second matrix is nonempty, i.e., pair[n_kdx] contains pair[jdx] i.e., pair[jdx] divides pair[n_kjdx]
+                            list_of_edges.append((jdx,n_kdx))
+                        else:
+                            # If two pairs are the in the same H-coordinates but not overlapped,
+                            # Then we do not need to make an edge between them
+                            pass
+                #Using vertices and edges, generate sage digraph
+                g = DiGraph([list_of_vertices,list_of_edges])
+                # Contract digraph by overlap_classes
+                for sublist in overlap_classes:
+                    for ldx in range(len(sublist)-1):
+                        g.contract_edge((sublist[0],sublist[ldx+1]))
+                # From above, we just delete overlap classes, so we do not have error on temp_poset.
+                temp_poset = FinitePoset(g)
+                max_elements = temp_poset.maximal_elements()
+                # Now we add deleted overlap pairs if it is a maximal element.
+                overlapped_max_elements=[]
+                ldx = 0
+                while ldx < len(overlap_classes):
+                    udx =0
+                    while udx <len(max_elements):
+                        if max_elements[udx] in overlap_classes[ldx]:
+                            overlapped_max_elements = overlapped_max_elements +overlap_classes[ldx]
+                            ldx=ldx+1
+                            udx=0
+                            
+                        udx=udx+1
+                    ldx = ldx+1
+                    udx=0
+                updated_list = updated_list + [specific_pairs[i] for i in overlapped_max_elements] + [specific_pairs[i] for i in max_elements]
+            else:
+                updated_list.append( pair_list[tf_list.index(1)] )
+        new_dict.update({face:updated_list})
+    # Last, delete repeated dictionary
+    renew_dict = { key:unique_pairs(val) for key, val in new_dict.items()}
+    return renew_dict
+
+#### Theorem 4.5
+def standardPairs(an_ideal):
+    """Return the standard cover of the given ideal.
+    This is an implementation of Theorem 4.5 in https://arxiv.org/abs/2005.10968
+        Argument:
+            monomialIdeal an_ideal
+                An ideal of an affine monoid.
+        
+        Return
+            dict new_dict {face:list(properPair...)}
+                A dictionary of standard cover.
+        
+    """
+    if an_ideal.isStdCoverCalculated:
+        return an_ideal.standardCover()
+    if not isinstance(an_ideal, monomialIdeal):
+        raise ValueError("[Error]: The parameter is not a type of monomialIdeal")
+    if (an_ideal.ambientMonoid.isPointed() == False):
+        raise ValueError("[Error]: An ambient affine monoid is not pointed.")
+    if is_permuation_matrix(an_ideal.ambientMonoid.mingens):
+        #This is the case when an affine semigroup ring is a polynomial ring.
+        transp_generator = matrix(an_ideal.gens).transpose()
+        stdpair_J=stdPairs_poly_ring(transp_generator.ncols(),transp_generator)
+        # All generator matrix of a polynomial ring should contain a standard basis.
+        # Figure out which number of columns are standard pairs.
+        variable_list = [];
+        temp_col = matrix(an_ideal.ambientMonoid.gens).columns()
+        for col in temp_col:
+            length =0
+            for col_idx in col:
+                length = length +col_idx*col_idx
+            if length == 1:
+                variable_list.append(list(col).index(1))
+            else:
+                variable_list.append(-1)
+        
+        # Result, a cover in paper, is a dictionary whose key is a face of ambient monoid
+        # and whose value is set of pairs sharing faces.
+        result={face:[] for face in an_ideal.ambientMonoid.faceLattice.list()}
+        for idx in stdpair_J:
+            # generate b+ Gu in the paper
+            u= idx[0][np.newaxis].T
+            face = tuple(sorted([variable_list.index(poly_var) for poly_var in idx[1]]))
+            result[face].append(properPair(u,face,an_ideal, True))
+        for face in an_ideal.ambientMonoid.faceLattice.list():
+            if not result[face]:
+                del result[face]
+        # Change lists in result on set
+        return {key:unique_pairs(val) for key,val in result.items()}
+    
+    zero_ideal = monomialIdeal(an_ideal.ambientMonoid, np.array([[]]).T)
+    # For the first element, find initial standard cover for principal ideal.
+    C = properPair(an_ideal.gens[:,[0]] * 0, an_ideal.ambientMonoid.IndFace(an_ideal.ambientMonoid.gens), zero_ideal)
+    D = properPair(an_ideal.gens[:,[0]], an_ideal.ambientMonoid.IndFace(an_ideal.ambientMonoid.gens), zero_ideal)
+    cover = pair_difference(C,D)
+    if an_ideal.isPrincipal():
+        an_ideal.standardPairs = cover_to_stdPairs(cover, an_ideal);
+        return an_ideal.standardPairs
+    else:
+        print("Calculate the standard cover of an ideal")
+        print("It takes a few minutes, depending on the system.")
+        count_column=1
+        number_of_columns = an_ideal.gens.shape[1]
+        print("Cover for", str(count_column) ," generator was calculated. ", str(number_of_columns-1)," generators remaining. ")
+        for idx in range(an_ideal.gens.shape[1]-1): # For loop by # of columns
+            # Since we already use 0th column, idx will be used from 1 to (n-1), i.e., idx+1
+            new_pair = properPair( an_ideal.gens[:,[idx+1]], an_ideal.ambientMonoid.IndFace(an_ideal.ambientMonoid.gens), zero_ideal)
+            temp_ideal = monomialIdeal(an_ideal.ambientMonoid, an_ideal.gens[:,0:(idx+2)])
+            new_cover={}
+            for list_pair in cover.values():
+                for pair in list_pair:
+                    pair_diff = pair_difference(pair,new_pair)
+                    for key, val in pair_diff.items():
+                        if key in new_cover.keys():
+                            new_cover[key] = unique_pairs(new_cover[key] + val)
+                        else:
+                            new_cover[key] = unique_pairs(val)
+            # Now update our cover by prop 4.4
+            cover = cover_to_stdPairs(new_cover, temp_ideal)
+            count_column = count_column+1
+            number_of_columns = number_of_columns-1
+            print("Cover for", str(count_column) ," generators was calculated. ", str(number_of_columns-1)," generators remaining. ")
+        an_ideal.standardPairs = cover
+        return an_ideal.standardPairs
+
+#### Theorem 4.8
+def stdcover_to_ideal(cover,ambientMonoid):
+    """ Given a standard cover of an ideal, return the ideal as an 'monomialIdeal' object
+    This is an implementation of Theorem 4.8 in https://arxiv.org/abs/2005.10968
+        Arguments:
+            dictionary 
+                cover: a dictionary which is a standard cover of some unknown ideal.
+
+                affineMonoid ambientMonoid: an affine monoid where the cover lives.
+        
+        Return:
+            monomialIdeal
+                an_ideal: an ideal having cover as its standard cover.
+           """
+    result = initiate_stdcover_to_ideal(cover,ambientMonoid)
+    while (result[0] == False):
+        result = coordination_cover_to_ideal(cover, ambientMonoid,result[1])
+    return result[1]
+
+def IsStdCoverValid(cover, ambientMonoid):
+    """Check the validity of a cover of proper pairs in some ambient monoid
+    This is a subroutine of Theorem 4.8 for avoiing error."""
+    if not isinstance(cover,dict):
+        raise ValueError("[Error]: the 1st argument is not a dictionary.")
+    if not isinstance(ambientMonoid,affineMonoid):
+        raise ValueError("[Error]: the 2nd argument is not an affineMonoid object.")
+    for key, value in cover.items():
+        if key not in ambientMonoid.faceLattice.list():
+            raise ValueError("[Error]: One of the key is not in the face lattice")
+        for pair in value:
+            if not isinstance(pair,properPair):
+                raise ValueError("[Error]: One of the pair is not the properPair object")
+    return True
+
+def initiate_stdcover_to_ideal(cover,ambientMonoid):
+    """Initial part of stdcover_to_ideal
+    This is 1st subroutine of Theorem 4.8 in https://arxiv.org/abs/2005.10968"""
+    if not IsStdCoverValid(cover, ambientMonoid):
+        raise ValueError("[Error]: Given cover is not a valid cover of the given monoid.")
+    MaxOverlapClasses =findMaximalOverlapClassesInCover(findOverlapClasses(cover),cover)
+    final_gens = []
+    # To make fast, we specially treat the zero-face pairs;
+    if () in cover:
+        candid_of_gens_from_zero_face_pairs =[]
+        for zero_pair in cover[()]:
+            for ind in range(ambientMonoid.gens.shape[1]):
+                candid_of_gens_from_zero_face_pairs.append(zero_pair.monomial+ambientMonoid.gens[:,(ind,)])
+        # And check whether they are standard monomial or not.
+        # Notes that we only need to check it for zero faces;
+        # Pf) If monomial+gen is in the standard pair with nonzero face, say (a,F),
+        # Then, for any f in F, monomial+f is not in the ideal;
+        # Otherwise, monomial+f +gen is in the ideal, which means that
+        # (a,F) \cap the ideal is nonempty, contradiction.
+        for monomial in candid_of_gens_from_zero_face_pairs:
+            parity = False;
+            for zero_pair in cover[()]:
+                if np.array(zero_pair.isElement(monomial)).size >0:
+                    parity = True
+                    break;
+            if parity == False:
+                final_gens.append(monomial)
+    #Now deals with nonzero face pairs.
+    candid_of_gens= []
+    zero_ideal = monomialIdeal(ambientMonoid, np.array([[]]).T)
+    for key, value in MaxOverlapClasses.items():
+        # Generate the complement of the given face index
+        if key == ():
+            continue
+        # Otherwise, if key is a nonzero face,
+        # Take complement of a face.
+        complement_face=[]
+        for ind in range(ambientMonoid.gens.shape[1]):
+            if ind not in key:
+                complement_face.append(ind)
+        complement_face = tuple(complement_face)
+        # Take an overlap class, and figure out its starting point is in other standard pair
+        # If not, then take next monomials and test it again.
+        for ov_class in value:
+            testing_monomial = [pair.monomial for pair in ov_class]
+            resulting_monomials = []
+            possible_faces = ambientMonoid.faceLattice.closed_interval((), key)
+            possible_faces.remove(())
+            while len(testing_monomial)>0:
+                monomial = testing_monomial[0]
+                del testing_monomial[0]
+                non_usable_faces =[]
+                for new_key,new_value in cover.items():
+                    if (new_key != key) and (new_key != ()):
+                        for comparing_pair in new_value:
+                            if np.array(comparing_pair.isElement(monomial)).size>0:
+                                non_usable_faces = non_usable_faces+ ambientMonoid.faceLattice.closed_interval((), comparing_pair.face)
+                                break;
+                candid_faces = set(possible_faces).difference(set(non_usable_faces))
+                # Generate monomials.
+                if bool(non_usable_faces) == True:
+                    for ind_face in candid_faces:
+                        add_monos=ambientMonoid.gens[:,ind_face]
+                        new_monomial = monomial
+                        for idx in range(add_monos.shape[1]):
+                            new_monomial = new_monomial + add_monos[:,(idx,)]
+                        testing_monomial.append(new_monomial)
+                    testing_monomial=unique_np_arrays(testing_monomial)
+                else:
+                    resulting_monomials.append(monomial)
+            for monomial in resulting_monomials:
+                for ind in complement_face:
+                    candid_of_gens.append(monomial+ambientMonoid.gens[:,(ind,)])
+        candid_of_gens = unique_np_arrays(candid_of_gens)
+    # Lastly, checked that whether the monomial in the list is std monomial or not.
+    for monomial in candid_of_gens:
+        parity = False;
+        for key,value in cover.items():
+            for pair in value:
+                if np.array(pair.isElement(monomial)).size >0:
+                    parity = True
+                    break;
+            if parity == True:
+                break
+        if parity == False:
+            final_gens.append(monomial)
+    #Get an initial ideal.
+    if final_gens:
+        candidate_ideal = monomialIdeal(ambientMonoid,np.concatenate(final_gens,axis=1))
+        return [False, candidate_ideal]
+    else:
+        #Return zero ideal
+        return [True, monomialIdeal(ambientMonoid,matrix(ZZ,0))]
+
+def coordination_cover_to_ideal(cover, ambientMonoid, candidate_ideal):
+    """Coordination part; do not use it otherwise.
+    This is 2nd subroutine of Theorem 4.8 in https://arxiv.org/abs/2005.10968"""
+    #Get the standard cover
+    new_cover = candidate_ideal.standardCover()
+    #Check whether cover is the same or not.
+    difference_cover = cover_difference(cover,new_cover)
+    #Lastly, check that whether new_cover has new keys not in cover.
+    for key in new_cover:
+        if key not in cover.keys():
+            difference_cover[key]=new_cover[key]
+    if bool(difference_cover) == False:
+        return [True, candidate_ideal]
+    else:
+        #If covers differ, then add those difference parts.
+        # First of all, add those zero-face standard pair of candidate, which are not in the original.
+        if () in difference_cover:
+            candid_of_gens = [ a_pair.monomial for a_pair in difference_cover[()] ]
+            del difference_cover[()]
+        else:
+            candid_of_gens = []
+        # Also, don't forget to add original generators of candidate ideal.
+        previous_gens = candidate_ideal.gens
+
+        for key, value in difference_cover.items():
+            # Take complement of a face.
+            complement_face=[]
+            for ind in range(ambientMonoid.gens.shape[1]):
+                if ind not in key:
+                    complement_face.append(ind)
+            complement_face = tuple(complement_face)
+            # Loop on overlap classes.
+            testing_monomial = [pair.monomial for pair in value]
+            possible_faces = ambientMonoid.faceLattice.closed_interval((), key)
+            possible_faces.remove(())
+            while len(testing_monomial)>1:
+                monomial = testing_monomial[0]
+                del testing_monomial[0]
+                non_usable_faces =[]
+                for new_key,new_value in cover.items():
+                    # Notes that in the second time, we need to check for pairs with empty faces
+                    # since it is no longer the valid standard pair in original cover.
+                    if (new_key != key):
+                        for comparing_pair in new_value:
+                            if np.array(comparing_pair.isElement(monomial)).size>0:
+                                non_usable_faces = non_usable_faces+ ambientMonoid.faceLattice.closed_interval((), comparing_pair.face)
+                                break;
+                candid_faces = set(possible_faces).difference(set(non_usable_faces))
+                # Generate monomials.
+                if bool(non_usable_faces) == True:
+                    if bool(candid_faces) == True:
+                        for ind_face in candid_faces:
+                            add_monos=ambientMonoid.gens[:,ind_face]
+                            for idx in range(add_monos.shape[1]):
+                                testing_monomial.append(add_monos[:,(idx,)]+monomial)
+                        unique_np_arrays(testing_monomial)
+                else:
+                    candid_of_gens.append(monomial)
+            # Notes that we don't need to generate final_gens; if they are not in any cover, then done.
+        if len(candid_of_gens)>0:
+            new_candidate_ideal = monomialIdeal(ambientMonoid,np.concatenate( (previous_gens,np.concatenate(candid_of_gens,axis=1)),axis=1))
+            return [False, new_candidate_ideal]
+        else:
+            print("Warning: This result may not exact;")
+            return [True, candidate_ideal]
+
+#### Macaulay2 Transformations.
+def FromMacaulay(Mac2_mon_subalg):
+    if not isinstance( Mac2_mon_subalg, type(macaulay2(1))):
+        raise ValueError("[Error]: The given argument is not Macaulay2 argument.")
+    #Test its class
+    if str(Mac2_mon_subalg)[:18] != 'MonomialSubalgebra':
+        raise ValueError("[Error]: The given argument is not MonomialSubalgebra in Macaulay2 of Normaliz.")
+    # Find number of generators
+    numgens = len(str(Mac2_mon_subalg).split('>')[2].split(','))
+    # Find number of variables
+    numvar = len(str(Mac2_mon_subalg.ring().gens()).split(','))
+    gens = np.zeros((numvar, 1), dtype='int')
+    for idx in range(numgens):
+        temp=str(Mac2_mon_subalg.generators()[idx])
+        exp_gen = np.array(ast.literal_eval(str(macaulay2("exponents oo")).replace('{','[').replace('}',']')), dtype='int').T
+        gens =np.concatenate((gens, exp_gen), axis=1)
+    gens = np.delete(gens,0,1)
+    return affineMonoid(gens)
+
+def ToMacaulay2(monomial_ideal, cover = False):
+    if not isinstance(monomial_ideal, monomialIdeal):
+        raise ValueError("[Error]: 1st argument should be type of monomialIdeal.")
+    affine_monoid = monomial_ideal.ambientMonoid
+    # Number of variables we need.
+    numvar = affine_monoid.gens.shape[0]
+    #Generate polynomial ring
+    gens_poly_ring='R=ZZ[vars (0..'+str(numvar-1)+')]'
+    macaulay2(gens_poly_ring)
+    #Load normaliz in Macaulay2
+    macaulay2('loadPackage Normaliz')
+    #Generate monomial subalgebra in Macaulay2.
+    mon_sub_alg = 'createMonomialSubalgebra {'
+    list_of_gens =[]
+    for column in affine_monoid.gens.T:
+        eq =''
+        for jdx in range(numvar):
+            eq = eq + 'R_'+str(jdx)+'^'+str(column[jdx])+'*'
+        eq = eq[:-1]+','
+        mon_sub_alg = mon_sub_alg + eq
+        list_of_gens.append(eq[:-1])
+        
+    mon_sub_alg = mon_sub_alg[:-1]+'}'
+    Mac2_mon_subalg=macaulay2(mon_sub_alg)
+    # Generate monomial ideal of monomial subalgebra in Macaulay2 as a list
+    mon_sub_alg_ideal ='{'
+    for column in monomial_ideal.gens.T:
+        eq =''
+        for jdx in range(numvar):
+            eq = eq + 'R_'+str(jdx)+'^'+str(column[jdx])+'*'
+        eq = eq[:-1]+','
+        mon_sub_alg_ideal = mon_sub_alg_ideal + eq
+    mon_sub_alg_ideal = mon_sub_alg_ideal[:-1]+'}'
+    Mac2_mon_sub_alg_ideal = macaulay2(mon_sub_alg_ideal)   
+    # If cover is also in an argument,
+    if isinstance(cover,dict):
+        total_list ='{'
+        for key, val in cover.items():
+            faces = [list_of_gens[idx] for idx in key]
+            string_faces = '{'+ ','.join(faces) +'}'
+            for pair in val:
+                gens = ''
+                for kdx in range(numvar):
+                    gens = gens+'R_'+str(kdx)+'^'+str(pair.monomial[kdx,0])+'*'
+                gens = gens[:-1]
+                std_pair = '{'+gens+','+string_faces+'}'
+                total_list = total_list + std_pair +',' 
+        total_list = total_list[:-1]+'}'
+        Mac2_std_cover =macaulay2(total_list)
+        return { 'AffineSemigroupRing':Mac2_mon_subalg, 'MonomialIdeal':Mac2_mon_sub_alg_ideal, 'StandardCover':Mac2_std_cover}
+    else:
+        return { 'AffineSemigroupRing':Mac2_mon_subalg, 'MonomialIdeal':Mac2_mon_sub_alg_ideal, 'StandardCover':'none'}
+
+
+#### Variable Transformations
+def pair_hash_wo_ideal(a_pair):
+    """This returns a hash string of pair without ideal information."""
+    if not isinstance(a_pair, properPair):
+        raise ValueError("[Error]: Given parameter is not a properPair object")
+    hashlist = (a_pair.hashstring).split('&')
+    del hashlist[2]
+    return '&'.join(hashlist)
+
+def sumColumn(mat_one):
+    """ Sum columns of numpy 2D array, and return 1D numpy array."""
+    if not isinstance(mat_one,np.ndarray):
+        raise ValueError("[Error]: This instance is not numpy.ndarray type")
+    if len(mat_one.shape) !=2:
+        raise ValueError("[Error]: This array is not 2-Dimensoinal")
+    temp = np.sum(mat_one, axis=1)
+    return np.reshape(temp, (temp.shape[0],1))
+
+def is_permuation_matrix(x):
+    x = np.asanyarray(x)
+    return (x.ndim == 2 and x.shape[0] == x.shape[1] and
+            (x.sum(axis=0) == 1).all() and 
+            (x.sum(axis=1) == 1).all() and
+            ((x == 1) | (x == 0)).all())
+def complement_of_down_set(list_of_given_face, ambientMonoid):
+    # Find list of faces
+    face_lists = ambientMonoid.faceLattice.list()
+    # Deal with trivial cases
+    #print("list_of_given_face", list_of_given_face)
+    if list_of_given_face == []:
+        return face_lists
+    face_lists.remove((-1,))    
+    if list_of_given_face == [(-1,)]:
+        return face_lists
+    if (-1,) in list_of_given_face:
+        list_of_given_face.remove((-1,))
+        if () not in list_of_given_face:
+            face_lists.remove(())
+            
+    new_lists =[]
+    for item in face_lists:
+        parity=False
+        for given_face in list_of_given_face:
+            if (set(given_face) >= set(item)): # If given face contains item as a subface,
+                parity = True
+        if parity == False:
+            new_lists.append(item)
+    return new_lists
+
+def np2d_to_string(twod_array):
+    if not isinstance(twod_array,np.ndarray):
+        raise ValueError("[Error]: This instance is not numpy.ndarray type")
+    if len(twod_array.shape) !=2:
+        raise ValueError("[Error]: This array is not 2-Dimensoinal")
+    return_str = ""
+    for row in twod_array:
+        for val in row:
+            return_str = return_str + str(val)+","
+        return_str = return_str[:-1] + "|"
+    return return_str[:-1]
+
+def string_to_np2d(twod_string):
+    if not isinstance(twod_string,str):
+        raise ValueError("[Error]: This does not give string object")
+    result= twod_string.split('|')
+    new_result = [ list(map(int, item.split(','))) for item in result]
+    return np.array(new_result)
+
+
+def json_dump_overlapClasses(ov_cover):
+    """Return string converted cover."""
+    if not isinstance(ov_cover, dict):
+        raise ValueError("[Error]: Given instance is not a dictionary")
+    str_cover = {}
+    for key,value in ov_cover.items():
+        str_cover[str(key)] = []
+        for ov_class in value:
+            str_cover[str(key)].append([pair.hashstring for pair in ov_class])
+    return json.dumps(str_cover)
+
+def json_dump_cover(cover):
+    """Return string converted cover."""
+    if not isinstance(cover, dict):
+        raise ValueError("[Error]: Given instance is not a dictionary")
+    str_cover = {}
+    for key,value in cover.items():
+        str_cover[str(key)]=[pair.hashstring for pair in value]
+    return json.dumps(str_cover)
+
+def txt_to_ideal(text_info):
+    """Given save_txt to ideal. Assume that all pairs in the cover are from zero ideal.
+    """
+    stripped_info = text_info.split("\n")
+    if stripped_info[0] != "I":
+        raise ValueError("[Error]: Given file is not a valid save file")
+    if stripped_info[1] == "Q":
+        ambientMonoid = affineMonoid(string_to_np2d(stripped_info[2]))
+    else:
+        raise ValueError("[Error]: Given file is not a valid save file")
+    if stripped_info[4] == "1":
+        return monomialIdeal(ambientMonoid, np.array([[]]).T)
+    an_ideal = monomialIdeal(ambientMonoid,string_to_np2d(stripped_info[6])) 
+    remaining = stripped_info[7:]
+    # Now deal with information part.
+    while (len(remaining) >0):
+        info_text = remaining[0]
+        del remaining[0]
+        if info_text == "isStdCoverCalculated":
+            if remaining[0] == "1":
+                del remaining[0]
+                str_cover = json.loads(remaining[0])
+                del remaining[0]
+                cover = {}
+                for key, value in str_cover.items():
+                    cover[ast.literal_eval(key)] = [properPair(string_to_np2d(pair.split("&")[0]),ast.literal_eval(pair.split("&")[1]),an_ideal) for pair in value]
+                an_ideal.standardPairs = cover
+                an_ideal.isStdCoverCalculated = True
+            else:
+                del remaining[0]
+        if (info_text == "isOverlapCalculated") or (info_text == "isMaxOverlapCalculated"):
+            if remaining[0] == "1":
+                del remaining[0]
+                str_cover = json.loads(remaining[0])
+                del remaining[0]
+                ovClasses = {}
+                for key, value in str_cover.items():
+                    ovClasses[ast.literal_eval(key)] =[]
+                    for ov_class in value:
+                        ovClasses[ast.literal_eval(key)].append([properPair(string_to_np2d(pair.split("&")[0]),ast.literal_eval(pair.split("&")[1]),an_ideal) for pair in ov_class])
+                if (info_text == "isOverlapCalculated"):
+                    an_ideal.overlapClasses_dict = ovClasses
+                    an_ideal.isOverlapCalculated = True
+                else:
+                    an_ideal.maxOverlapClasses = ovClasses
+                    an_ideal.isMaxOverlapCalculated = True
+        if (info_text == "isAssPrimeCalculated"):
+            if remaining[0] == "1":
+                del remaining[0]
+                str_assPrimes =json.loads(remaining[0])
+                del remaining[0]
+                assPrimes={}
+                for key, value in str_assPrimes.items():
+                    assPrimes[ast.literal_eval(key)] = [txt_to_ideal(txt_ideal) for txt_ideal in value]
+                an_ideal.dict_associatedPrimeIdeals = assPrimes
+                an_ideal.isAssPrimeCalculated = True
+        if info_text == "isIrrDecomPrimeCalculated":
+            if remaining[0] == "1":
+                del remaining[0]
+                str_irrDecoms = json.loads(remaining[0])
+                del remaining[0]
+                irrDecoms = [txt_to_ideal(txt_ideal) for txt_ideal in str_irrDecoms]
+                an_ideal.irreducibleDecomIdeals = irrDecoms
+                an_ideal.isIrrDecomPrimeCalculated = True
+    return an_ideal
+def txt_to_cover(text_info):
+    """Load of a given cover. Assume that all pairs in the cover are from zero ideal.
+    In this, we assume that file structure is 
+    (Start of File)
+    C\n
+    Q\n
+    (np2d_to_string generator of affineMonoid)\n
+    (json dumped string of cover dictionary)
+    """
+    stripped_info = text_info.split("\n")
+    ambientMonoid = affineMonoid(string_to_np2d(stripped_info[2]))
+    str_cover = json.loads(stripped_info[3])
+    zero_ideal = monomialIdeal(ambientMonoid, np.array([[]]).T)
+    cover = {}
+    for key, value in str_cover.items():
+        cover[ast.literal_eval(key)] = [properPair(string_to_np2d(pair.split("&")[0]),ast.literal_eval(pair.split("&")[1]),zero_ideal) for pair in value]
+    return [ambientMonoid, cover]
+
+#### File I/O
+def save_cover(cover, ambientMonoid, path_of_file):
+    """Save the cover; all pairs will be saved with proper pair of zero ideal.
+    If you know that covers are standard, then use the save ideal instead of it."""
+    zero_ideal = monomialIdeal(ambientMonoid, np.array([[]]).T)
+    if not isinstance(cover, dict):
+        raise ValueError("[Error]: Given 1st instance is not a dictionary")
+    if not isinstance(ambientMonoid,affineMonoid):
+        raise ValueError("[Error]: Given 2nd instance is not an affineMonoid object")
+    if path_of_file[0] == '~':
+        path_of_file = str(Path.home())+path_of_file[1:]
+    new_cover ={}
+    for key,value in cover.items():
+        new_cover[key]=[properPair(pair.monomial,pair.face,zero_ideal,True) for pair in value]
+    with open(path_of_file,'w') as f:
+        #Write an ambient monoid
+        f.write("C\nQ\n"+np2d_to_string( ambientMonoid.gens)+"\n"+json_dump_cover(new_cover))
+    f.close()
+    return 1
+
+def load_stdPairs(path_of_file):
+    """Load a saved file into an object of stdPairs.spyx library."""
+    if path_of_file[0] == '~':
+       path_of_file = str(Path.home())+path_of_file[1:]
+    with open(path_of_file,'r') as f:
+        #Write an ambient monoid
+        text_info = f.read()
+    f.close()
+    if text_info[0]== "I":
+        return txt_to_ideal(text_info)
+    if text_info[0]== "Q":
+        stripped_info = text_info.split("\n")
+        return affineMonoid(string_to_np2d(stripped_info[1]))
+    if text_info[0]== "C":
+        return txt_to_cover(text_info)
+    else:
+        raise ValueError("[Error]: Given file is not in a format of stdPairs library save file")
