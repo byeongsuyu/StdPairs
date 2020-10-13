@@ -29,7 +29,7 @@ load("[path]/stdPairs.spyx")
 
 User Manuel
 -------------
-See the section 2 of [Yu, 2020]()
+See the section 2 of Yu, 2020 (It will be update on arxiv soon.)
 
 
 Copyright & License
