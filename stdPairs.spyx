@@ -93,7 +93,7 @@ class affineMonoid():
             python regards an empty matrix as True. Use .nrows() instead to check emptyness.
                     
     sage.matrix.matrix_integer_dense.Matrix_integer_dense
-        isIntersectionOfSubmonoid(np.ndarray(2D) monomial_a, tuple face_a, 
+        IntersectionOfPairs(np.ndarray(2D) monomial_a, tuple face_a, 
                                 np.ndarray(2D) monomial_b, tuple face_b)   
             Given two pair (monomial_a, face_a) and (monomial_b, face_b) find their intersection's 
             minimal solution. In other words, find all coordinatewise minimal c = [f;g] such that                
@@ -308,7 +308,7 @@ class affineMonoid():
         if inf_sol: #If solution is infinite,
             raise ValueError("[Error]: Solution space is not finite, which is impossible in this case.")
         return return_sol
-    def isIntersectionOfSubmonoid(self, monomial_a, face_a, monomial_b, face_b):
+    def IntersectionOfPairs(self, monomial_a, face_a, monomial_b, face_b):
         """ Given two proper pairs (monomial_a,face_a) and (monomial_b,face_b), 
             find a nonnegative vector u and v such that
             monomial_a+ face_a * u = monomial_b+ face_b * v. 
@@ -911,7 +911,7 @@ class properPair:
             #Test that whether it is proper pair or not.
             for column in ambientIdeal.gens.T:
                 # Check that monomial + face *x = column + Monoid element
-                if ambientIdeal.ambientMonoid.isIntersectionOfSubmonoid(monomial, face, column[np.newaxis].T, ambientIdeal.ambientMonoid.faceLattice.top()).nrows():
+                if ambientIdeal.ambientMonoid.IntersectionOfPairs(monomial, face, column[np.newaxis].T, ambientIdeal.ambientMonoid.faceLattice.top()).nrows():
                     # The reason for setting Warning is that it will be used as a status below.
                     raise Warning("[Error]: This is not a proper pair of the given ideal.")
             self.monomial = monomial
@@ -1110,7 +1110,7 @@ def divides(pair_a, pair_b):
         #Get an index of the whole monoid as a face
         temp_face= pair_a.ambientIdeal.ambientMonoid.IndFace(pair_a.ambientIdeal.ambientMonoid.gens)
         #Generate a pair (self.monomial, ambientMonoid, zero ideal)
-        return pair_a.ambientIdeal.ambientMonoid.isIntersectionOfSubmonoid(pair_a.monomial,temp_face, pair_b.monomial,pair_b.face)
+        return pair_a.ambientIdeal.ambientMonoid.IntersectionOfPairs(pair_a.monomial,temp_face, pair_b.monomial,pair_b.face)
 def radicalIdeal(an_ideal):
     """Find a radical ideal of given ideal"""
     if not isinstance(an_ideal, monomialIdeal):
@@ -1234,7 +1234,7 @@ def overlapPairs(a_pair,list_of_pairs):
     for pair in list_of_pairs:
         # Compare two pairs.
         # Here we care about whether two pairs has overlapped part or not.
-        result = a_pair.ambientIdeal.ambientMonoid.isIntersectionOfSubmonoid(a_pair.monomial,a_pair.face, pair.monomial, pair.face)
+        result = a_pair.ambientIdeal.ambientMonoid.IntersectionOfPairs(a_pair.monomial,a_pair.face, pair.monomial, pair.face)
         if result:
             # Result is not empty;
             overlap_classes.append(pair)
@@ -1340,7 +1340,7 @@ def pair_difference(pair_a, pair_b):
     # a+u*F = b+v*G for u and v
     # as a form
     # [F;-G][u;v] = b-a
-    minsol = pair_a.ambientIdeal.ambientMonoid.isIntersectionOfSubmonoid(pair_a.monomial, pair_a.face, pair_b.monomial, pair_b.face)
+    minsol = pair_a.ambientIdeal.ambientMonoid.IntersectionOfPairs(pair_a.monomial, pair_a.face, pair_b.monomial, pair_b.face)
     #Determine whether transpose it or not.
     shape_of_face_a=(pair_a.ambientIdeal.ambientMonoid.Face(pair_a.face)).shape
     #Reduce minsol = [F;-G] to [F] if F is nonzero
@@ -1422,11 +1422,11 @@ def stdPairs_poly_ring(numvar, genset):
 #### Lemma 4.2
 """
     sage.matrix
-        minsol_of_intersection(vector a, tuple face, affineMonoid Q):
+        minimalHoles(vector a, tuple face, affineMonoid Q):
             return the minimal solutoin of the intersection between (a+RF) and Q.
 
 """
-def minsol_of_intersection(vector, face, affine_monoid):
+def minimalHoles(vector, face, affine_monoid):
     """ Given a vector and face, find the minimal element of intersection of (vector+ RR* face) and affine_monoid 
     This is an implementation of Lemma 4.2 in https://arxiv.org/abs/2005.10968
         Arguments:
@@ -1513,7 +1513,7 @@ def czero_to_cone(cover, ambientIdeal):
         pair_list = list(pair_set)
         new_list=[]
         for pair in pair_list:
-            minsol=minsol_of_intersection(pair.monomial, pair.face, pair.ambientIdeal.ambientMonoid)
+            minsol=minimalHoles(pair.monomial, pair.face, pair.ambientIdeal.ambientMonoid)
             result=np.matmul(pair.ambientIdeal.ambientMonoid.gens, minsol.transpose().numpy()).T                
             # Use monomials in minsol which divides the original monomial
             new_result=[ vector[np.newaxis].T for vector in result if pair.ambientIdeal.ambientMonoid.isElement(pair.monomial-vector[np.newaxis].T).nrows() >0 ]
@@ -1643,7 +1643,7 @@ def standard_cover(cover, ambientIdeal):
                 for jdx in range(len(specific_pairs)-1):
                     for kdx in range(len(specific_pairs)-jdx-1):
                         #Compare two sets.
-                        # Notes that if a pair_a contains pair_b, then isIntersectionOfSubmonoid(pair_a,pair_b)
+                        # Notes that if a pair_a contains pair_b, then IntersectionOfPairs(pair_a,pair_b)
                         # returns [nonzero half part, zero half part]. (Likewise, if pair_b contains pair_b, then
                         # it returns [zero half part, nonzero half part].)
                         n_kdx = kdx+jdx+1
@@ -2048,7 +2048,11 @@ def FromMacaulay(Mac2_mon_subalg):
     gens = np.delete(gens,0,1)
     return affineMonoid(gens)
 
-def ToMacaulay2(monomial_ideal, cover = False):
+def ToMacaulay2(monomial_ideal):
+    if monomial_ideal.isStdCoverCalculated == True:
+        cover = monomial_ideal.standardCover()
+    else:
+        cover = False
     if not isinstance(monomial_ideal, monomialIdeal):
         raise ValueError("[Error]: 1st argument should be type of monomialIdeal.")
     affine_monoid = monomial_ideal.ambientMonoid
