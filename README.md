@@ -27,7 +27,7 @@ On jupyter attached to Sage
 load("[path]/stdPairs.spyx")
 ```
 
-User Manuel
+User Manual
 -------------
 See the section 2 of [Yu, 2020](https://arxiv.org/abs/2010.08903). 
 
