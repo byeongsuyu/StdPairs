@@ -652,7 +652,7 @@ class monomialIdeal:
                 dict_classes[key] = temp_list
             self.dict_maxOverlapClasses = dict_classes
             self.isMaxOverlapCalculated = True
-            self.associatedFaces = list(self.dict_maxOverlapClasses.keys())
+            
             return self.dict_maxOverlapClasses
     def associatedPrimes(self):
         """return dictionary whose key is a face, and whose value is the prime ideal"""
@@ -660,19 +660,23 @@ class monomialIdeal:
             return self.dict_associatedPrimeIdeals
         if not self.isMaxOverlapCalculated:
             self.maximalOverlapClasses()
-        self.dict_associatedPrimeIdeals = [self.ambientMonoid.primeIdeal(face) for face in self.associatedFaces]
+        self.dict_associatedPrimeIdeals = {}
+        list_associatedFaces = list(self.dict_maxOverlapClasses.keys())
+        for face in list_associatedFaces:
+            self.dict_associatedPrimeIdeals[face]=[self.ambientMonoid.primeIdeal(face)]
         self.isAssPrimeCalculated = True
         return self.dict_associatedPrimeIdeals
     def multiplicity(self, an_ideal_or_face):
         assPrimes = self.associatedPrimes()
         if isinstance(an_ideal_or_face, monomialIdeal):
-            for counter, prime_ideal in enumerate(assPrimes):
-                if prime_ideal == an_ideal_or_face:
+            for face, prime_ideal in assPrimes.items():
+                if prime_ideal[0] == an_ideal_or_face:
                     ovlClasses = self.overlapClasses()
-                    return len(ovlClasses[self.associatedFaces[counter]])
+                    return len(ovlClasses[face])
             raise ValueError("[Error]: Given ideal is not an associated prime")
         if isinstance(an_ideal_or_face,tuple):
-            if an_ideal_or_face in self.associatedFaces:
+            list_associatedFaces = list(self.dict_maxOverlapClasses.keys())
+            if an_ideal_or_face in self.list_associatedFaces:
                 ovlClasses = self.overlapClasses()
                 return len(ovlClasses[an_ideal_or_face])
             raise ValueError("[Error]: Given face is not an associated face")
