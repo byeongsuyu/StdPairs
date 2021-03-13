@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>AffineMonoid Class &mdash; StdPairs 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="MonomialIdeal Class" href="monomialideal.html" />
+    <link rel="prev" title="Module contents" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> StdPairs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Module contents</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">AffineMonoid Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monomialideal.html">MonomialIdeal Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="properpair.html">ProperPair Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalfunctions.html">Global functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">StdPairs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="api.html">Module contents</a> &raquo;</li>
+        
+      <li>AffineMonoid Class</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/affinemonoid.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="affinemonoid-class">
+<h1>AffineMonoid Class<a class="headerlink" href="#affinemonoid-class" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="stdpairs.AffineMonoid">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">AffineMonoid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_normaliz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class representing an <em>affine semigroup</em>. An <em>affine semigroup</em> is a semigroup
+generated by a finite subset of a free abelian group <span class="math notranslate nohighlight">\(\mathbb{Z}^{n}\)</span>
+for some integer <span class="math notranslate nohighlight">\(n\)</span>. The finite subset used for construction is represented as
+a matrix over <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> and called the <em>generating matrix</em>.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">genset</span></code> – A <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object with 2-dimensional shape and integer elements or a <code class="docutils literal notranslate"><span class="pre">sage.matrix.matrix_integer_dense</span></code> object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_normaliz</span></code> – A <code class="docutils literal notranslate"><span class="pre">bool</span></code> object. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>. If it is <code class="docutils literal notranslate"><span class="pre">True</span></code>, generate corresponding polyhedron using <code class="docutils literal notranslate"><span class="pre">PyNormaliz</span></code> package.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>An <code class="docutils literal notranslate"><span class="pre">AffineMonoid</span></code> object whose generating set is <code class="docutils literal notranslate"><span class="pre">genset</span></code>.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">numpy</span>
+<span class="c1">#Using ``NumPy``</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span>
+<span class="n">An</span> <span class="n">affine</span> <span class="n">semigroup</span> <span class="n">whose</span> <span class="n">generating</span> <span class="nb">set</span> <span class="ow">is</span>
+<span class="p">[[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span><span class="p">]]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">numpy</span>
+<span class="c1">#Using ``sage.matrix.matrix_integer_dense``</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">An</span> <span class="n">affine</span> <span class="n">semigroup</span> <span class="n">whose</span> <span class="n">generating</span> <span class="nb">set</span> <span class="ow">is</span>
+<span class="p">[[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>TESTS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.face">
+<code class="sig-name descname"><span class="pre">face</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.face" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a set of generators of the given face represented by a tuple consisting of column indices of the generating matrix.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">index</span></code> – A <code class="docutils literal notranslate"><span class="pre">tuple</span></code> object containing column indices of the generating matrix which consists a face.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object representing a face.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">face</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
+<span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">face</span><span class="p">((</span><span class="mi">1</span><span class="p">,))</span>
+<span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">face</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">face</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="c1"># Gives an error since the third column also inside of the non-proper face represented by (0,1,2).</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.face_lattice">
+<code class="sig-name descname"><span class="pre">face_lattice</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.face_lattice" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a finite lattice of of tuples representing faces ordered by inclusion. Notes that <span class="math notranslate nohighlight">\((-1,)\)</span> is the least element for every affine monoid, denoting (-1)-dimesional face. This is not the same as <span class="math notranslate nohighlight">\(()\)</span>, the 0-dimensional face, which exists only in a pointed affine monoid.
+See <a class="reference external" href="https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/posets/lattices.html">Finite lattice and semilattices</a> for details to use the object.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">face_lattice</span></code> – A <code class="docutils literal notranslate"><span class="pre">sage.combinat.posets.lattices.FiniteLatticePoset_with_category</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">face_lattice</span><span class="p">()</span>
+<span class="n">Finite</span> <span class="n">lattice</span> <span class="n">containing</span> <span class="mi">5</span> <span class="n">elements</span>
+<span class="n">sage</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">Q</span><span class="o">.</span><span class="n">face_lattice</span><span class="p">())</span>
+<span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.gens">
+<code class="sig-name descname"><span class="pre">gens</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.gens" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the generating set of the given affine monoid as an <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object with 2-dimensional shape. This may not be the minimal generating set.
+In case of the pointed affine monoid, use <code class="docutils literal notranslate"><span class="pre">self.mingens()</span></code> to get the minimal generating set.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">genset</span></code> – A <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object with 2-dimensional shape.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">gens</span><span class="p">()</span>
+<span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.index_of_face">
+<code class="sig-name descname"><span class="pre">index_of_face</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">face_genset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.index_of_face" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a tuple denoting set of generators of the given face represented by the input <code class="docutils literal notranslate"><span class="pre">face_genset</span></code>, a matrix consisting of columns representing a face.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">face_genset</span></code> – A <code class="docutils literal notranslate"><span class="pre">NumPy</span></code> 2D-array with integer elements or <code class="docutils literal notranslate"><span class="pre">sage.matrix.matrix_integer_dense</span></code> object.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">tuple</span></code> object representing the generating matrix of a face of the affine semigroup.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">F</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">index_of_face</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">0</span><span class="p">,)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.index_to_face">
+<code class="sig-name descname"><span class="pre">index_to_face</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.index_to_face" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a <code class="docutils literal notranslate"><span class="pre">dictionary</span></code> whose keys are <code class="docutils literal notranslate"><span class="pre">tuple</span></code> denoting column indices of the generating set and whose values are corresponding face of real polyhedron as <code class="docutils literal notranslate"><span class="pre">sage.geometry.polyhedron.face.PolyhedronFace</span></code> object.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">index_to_face</span></code> – <code class="docutils literal notranslate"><span class="pre">dictionary</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">index_to_face</span><span class="p">()</span>
+<span class="p">{(</span><span class="o">-</span><span class="mi">1</span><span class="p">,):</span> <span class="n">A</span> <span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span><span class="p">,</span>
+ <span class="p">():</span> <span class="n">A</span> <span class="mi">0</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span><span class="p">,</span>
+ <span class="p">(</span><span class="mi">0</span><span class="p">,):</span> <span class="n">A</span> <span class="mi">1</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span> <span class="ow">and</span> <span class="mi">1</span> <span class="n">ray</span><span class="p">,</span>
+ <span class="p">(</span><span class="mi">1</span><span class="p">,):</span> <span class="n">A</span> <span class="mi">1</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span> <span class="ow">and</span> <span class="mi">1</span> <span class="n">ray</span><span class="p">,</span>
+ <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span> <span class="n">A</span> <span class="mi">2</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">rays</span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.integral_support_vectors">
+<code class="sig-name descname"><span class="pre">integral_support_vectors</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.integral_support_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a <code class="docutils literal notranslate"><span class="pre">dictionary</span></code> whose keys are <code class="docutils literal notranslate"><span class="pre">tuple</span></code> denoting face as column indices of the generating set, and whose values are an integer inner normal vector of the face. See <a class="reference internal" href="index.html#my2020" id="id1"><span>[MY2020]</span></a> for details about integral support function.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">integral</span> <span class="pre">support</span> <span class="pre">vectors</span></code> – A <code class="docutils literal notranslate"><span class="pre">dictionary</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">integral_support_vectors</span><span class="p">()</span>
+<span class="p">{():</span> <span class="n">array</span><span class="p">([[</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">]]),</span>
+ <span class="p">(</span><span class="mi">0</span><span class="p">,):</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+ <span class="p">(</span><span class="mi">1</span><span class="p">,):</span> <span class="n">array</span><span class="p">([[</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]),</span>
+ <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float64</span><span class="p">)}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.is_element">
+<code class="sig-name descname"><span class="pre">is_element</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col_vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.is_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suppose <span class="math notranslate nohighlight">\(A\)</span> is the generating matrix and <span class="math notranslate nohighlight">\(b\)</span> is a vector given by the input <code class="docutils literal notranslate"><span class="pre">col_vector</span></code>. Then
+this function returns a <code class="docutils literal notranslate"><span class="pre">sage.matrix.matrix_integer_dense</span></code> object whose row <span class="math notranslate nohighlight">\(u\)</span> satisfying <span class="math notranslate nohighlight">\(A \cdot u^{t}=b\)</span>.
+In other words, if the input is an element of the given affine semigroup, it returns non-empty matrix whose rows show how to generated
+the input using the generators of the affine monoid. Otherwise, if the input is not the element of the given affine monoid, it returns
+the empty matrix.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">col_vector</span></code> – A <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object with 2-dimensional shape with integer coefficients or <code class="docutils literal notranslate"><span class="pre">sage.matrix.matrix_integer_dense</span></code> object with one column. In other words, this argument should be a vector.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">sage.matrix.matrix_integer_dense</span></code> object whose row <span class="math notranslate nohighlight">\(u\)</span> is the solution of the equation <span class="math notranslate nohighlight">\(A \cdot u^{t}=b\)</span>.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">is_element</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">7</span><span class="p">],[</span><span class="mi">4</span><span class="p">]]))</span>
+<span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">3</span> <span class="mi">2</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">is_element</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">]]))</span>
+<span class="p">[]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.is_empty">
+<code class="sig-name descname"><span class="pre">is_empty</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.is_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff it is an empty set as an affine monoid .</p>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.is_pointed">
+<code class="sig-name descname"><span class="pre">is_pointed</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.is_pointed" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff the given affine monoid is pointed, i.e., no units except 0.</p>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">is_pointed</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">]]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">is_pointed</span><span class="p">()</span>
+<span class="kc">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.mingens">
+<code class="sig-name descname"><span class="pre">mingens</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.mingens" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the minimal generating set of the given affine monoid as an <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object with 2-dimensional shape if <code class="docutils literal notranslate"><span class="pre">self</span></code> is pointed affine monoid. If <code class="docutils literal notranslate"><span class="pre">self</span></code> is not pointed,
+then return the generating set with warning message.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">genset</span></code> – A <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object with 2-dimensional shape.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">gens</span><span class="p">()</span>
+<span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.poly">
+<code class="sig-name descname"><span class="pre">poly</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.poly" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a polyhedron in <span class="math notranslate nohighlight">\(\mathbb{Q}^{n}\)</span> generated by the given affine monoid.
+Notes that even the affine monoid non-normal, this returns only the normal rational cone, i.e., consisting of all lattice points of a rational polyhedron.
+See <a class="reference external" href="https://doc.sagemath.org/html/en/reference/discrete_geometry/sage/geometry/polyhedron/constructor.html">Polyhedra</a> for details to use the object returned.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">poly</span></code> – A <code class="docutils literal notranslate"><span class="pre">sage.geometry.polyhedron.parent.Polyhedra_ZZ_ppl_with_category</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">poly</span><span class="p">()</span>
+<span class="n">A</span> <span class="mi">2</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">rays</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">B</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">poly</span><span class="p">()</span> <span class="o">==</span> <span class="n">R</span><span class="o">.</span><span class="n">poly</span><span class="p">()</span>
+<span class="kc">True</span>
+<span class="c1"># They are differ as a polyhedron over ZZ, but the same as an object in SageMath.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.save">
+<code class="sig-name descname"><span class="pre">save</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_of_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>saves the given <code class="docutils literal notranslate"><span class="pre">AffineMonoid</span></code> object as sobj file. See <a class="reference external" href="https://doc.sagemath.org/html/en/reference/misc/sage/misc/persist.html">Object Persistence</a> for detail.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">path_of_file</span></code> – a <code class="docutils literal notranslate"><span class="pre">string</span></code> object denoting the path which the object <code class="docutils literal notranslate"><span class="pre">self</span></code> will be saved as a binary file.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;~/test.sobj&#39;</span><span class="p">)</span>
+<span class="c1"># If you want to load the saved one</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">())</span><span class="o">+</span><span class="s1">&#39;/test.sobj&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">==</span> <span class="n">Q</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.AffineMonoid.save_txt">
+<code class="sig-name descname"><span class="pre">save_txt</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.AffineMonoid.save_txt" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns strings containing information about the given affine monoid. One can recover it using a global function <code class="docutils literal notranslate"><span class="pre">txt_to_affinemonoid()</span></code>.</p>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">txt_to_affinemonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">save_txt</span><span class="p">()</span>
+<span class="s1">&#39;Q</span><span class="se">\n</span><span class="s1">1,2,7|0,2,4</span><span class="se">\n</span><span class="s1">&#39;</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">=</span><span class="n">txt_to_affinemonoid</span><span class="p">(</span><span class="n">Q</span><span class="o">.</span><span class="n">save_txt</span><span class="p">())</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">==</span> <span class="n">Q</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="monomialideal.html" class="btn btn-neutral float-right" title="MonomialIdeal Class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="api.html" class="btn btn-neutral float-left" title="Module contents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Byeongsu Yu.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

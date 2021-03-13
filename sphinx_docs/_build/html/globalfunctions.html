@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Global functions &mdash; StdPairs 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Support" href="support.html" />
+    <link rel="prev" title="ProperPair Class" href="properpair.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> StdPairs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Module contents</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="affinemonoid.html">AffineMonoid Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monomialideal.html">MonomialIdeal Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="properpair.html">ProperPair Class</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Global functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#decompose-a-difference-between-submonoids-as-submonoids">Decompose a difference between submonoids as submonoids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#find-a-prime-ideal-corresponding-to-a-face">Find a prime ideal corresponding to a face</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#division-of-pairs">Division of pairs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interface-using-macaulay2">Interface using <code class="docutils literal notranslate"><span class="pre">Macaulay2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#save-and-load-via-string">Save and load via <code class="docutils literal notranslate"><span class="pre">string</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">StdPairs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="api.html">Module contents</a> &raquo;</li>
+        
+      <li>Global functions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/globalfunctions.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="global-functions">
+<h1>Global functions<a class="headerlink" href="#global-functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="decompose-a-difference-between-submonoids-as-submonoids">
+<h2>Decompose a difference between submonoids as submonoids<a class="headerlink" href="#decompose-a-difference-between-submonoids-as-submonoids" title="Permalink to this headline">¶</a></h2>
+<p>If we have two translations of submonoids <span class="math notranslate nohighlight">\(b+\mathbb{N}G\)</span> and <span class="math notranslate nohighlight">\(b+\mathbb{N}G'\)</span> where <span class="math notranslate nohighlight">\(G' \supseteq G\)</span> as a face, then there is an algorithm to represent the difference <span class="math notranslate nohighlight">\((b+\mathbb{N}G) \setminus (b+\mathbb{N}G)'\)</span> as a union of finitely many translations of submonoids <span class="math notranslate nohighlight">\(\bigcup_{i=1}^{m}a_{i}+\mathbb{N}F_{i}\)</span> where <span class="math notranslate nohighlight">\(G \subseteq F_{i}\)</span> for any <span class="math notranslate nohighlight">\(i \in \{1,2, \cdots, m\}\)</span>. This algorithm was implemented as <code class="docutils literal notranslate"><span class="pre">pair_difference()</span></code>. More details on this algorithm can be found in <a class="reference external" href="https://arxiv.org/abs/2010.08903">Yu, 2020</a> or <a class="reference external" href="https://arxiv.org/abs/2005.10968">Matusevich and Yu, 2020</a>.</p>
+<dl class="py function">
+<dt id="stdpairs.pair_difference">
+<code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">pair_difference</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pair_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.pair_difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two pairs <code class="docutils literal notranslate"><span class="pre">pair_a</span></code> and <code class="docutils literal notranslate"><span class="pre">pair_b</span></code> representing <span class="math notranslate nohighlight">\((a,F)\)</span> and <span class="math notranslate nohighlight">\((b,G)\)</span> such that
+<span class="math notranslate nohighlight">\(F \subseteq G\)</span>, return a collection <span class="math notranslate nohighlight">\(C\)</span> such that <span class="math notranslate nohighlight">\((a+\mathbb{N}F) \setminus (b+\mathbb{N}G) = \bigcup_{(c,H) \in C}(c+\mathbb{N}H)\)</span>.
+This is an implementation of Theorem 4.1 in <a class="reference external" href="https://arxiv.org/abs/2005.10968">https://arxiv.org/abs/2005.10968</a></p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pair_a</span></code>, <code class="docutils literal notranslate"><span class="pre">pair_b</span></code> – <code class="docutils literal notranslate"><span class="pre">ProperPair</span></code> objects. <code class="docutils literal notranslate"><span class="pre">pair_a.face()</span></code> must contain <code class="docutils literal notranslate"><span class="pre">pair_b.face()</span></code> as a subtuple.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">dictionary</span></code> object whose keys are face, and whose values are <code class="docutils literal notranslate"><span class="pre">ProperPair</span></code> objects having the same face with its key.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span> <span class="n">MonomialIdeal</span><span class="p">,</span> <span class="n">ProperPair</span><span class="p">,</span> <span class="n">pair_difference</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span> <span class="o">=</span> <span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">I</span> <span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span><span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">0</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">I</span> <span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">pair_difference</span><span class="p">(</span><span class="n">C</span><span class="p">,</span><span class="n">D</span><span class="p">))</span>
+<span class="p">{(</span><span class="mi">0</span><span class="p">,):</span> <span class="p">[([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+  <span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+  <span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+  <span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])]}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="find-a-prime-ideal-corresponding-to-a-face">
+<h2>Find a prime ideal corresponding to a face<a class="headerlink" href="#find-a-prime-ideal-corresponding-to-a-face" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="stdpairs.prime_ideal">
+<code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">prime_ideal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">face</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">affine_monoid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.prime_ideal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> object <code class="docutils literal notranslate"><span class="pre">face</span></code>  representing face of <code class="docutils literal notranslate"><span class="pre">affine_monoid</span></code>, return  monomial ideal <code class="docutils literal notranslate"><span class="pre">other</span></code>, return the prime monomial ideal corresponding to the face.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">MonomialIdeal</span></code> object representing a prime monomial ideal corresponding to the <code class="docutils literal notranslate"><span class="pre">face</span></code>.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span> <span class="n">prime_ideal</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">=</span><span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">prime_ideal</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">An</span> <span class="n">ideal</span> <span class="n">whose</span> <span class="n">generating</span> <span class="nb">set</span> <span class="ow">is</span>
+<span class="p">[[</span><span class="mi">2</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">prime_ideal</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">An</span> <span class="n">ideal</span> <span class="n">whose</span> <span class="n">generating</span> <span class="nb">set</span> <span class="ow">is</span>
+<span class="p">[[</span><span class="mi">1</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="division-of-pairs">
+<h2>Division of pairs<a class="headerlink" href="#division-of-pairs" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="stdpairs.div_pairs">
+<code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">div_pairs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pair_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.div_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two pairs <code class="docutils literal notranslate"><span class="pre">pair_a</span></code> and <code class="docutils literal notranslate"><span class="pre">pair_b</span></code> representing <span class="math notranslate nohighlight">\((a,F)\)</span> and <span class="math notranslate nohighlight">\((b,G)\)</span> respectively,
+this method returns a monomial <span class="math notranslate nohighlight">\(c\)</span> such that <span class="math notranslate nohighlight">\(a+c+\mathbb{N}F \subseteq b+\mathbb{N}G\)</span>.</p>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span> <span class="o">=</span> <span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]]),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">div_pairs</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">T</span><span class="p">)</span>
+<span class="p">[]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">TT</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">div_pairs</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">TT</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="interface-using-macaulay2">
+<h2>Interface using <code class="docutils literal notranslate"><span class="pre">Macaulay2</span></code><a class="headerlink" href="#interface-using-macaulay2" title="Permalink to this headline">¶</a></h2>
+<p>Using <a class="reference external" href="https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.15/share/doc/Macaulay2/MonomialAlgebras/html/index.html">MonomialSubalgebra</a> class in <a class="reference external" href="https://faculty.math.illinois.edu/Macaulay2/">Macualay2</a>, one can translate <code class="docutils literal notranslate"><span class="pre">MonomialIdeal</span></code> object in this package into <a class="reference external" href="https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.15/share/doc/Macaulay2/MonomialAlgebras/html/index.html">MonomialSubalgebra</a> object in <a class="reference external" href="https://faculty.math.illinois.edu/Macaulay2/">Macualay2</a> via methods below.</p>
+<dl class="py function">
+<dt id="stdpairs.from_macaulay2">
+<code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">from_macaulay2</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.from_macaulay2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a <code class="docutils literal notranslate"><span class="pre">macaulay2</span></code> type object <code class="docutils literal notranslate"><span class="pre">mac2_mon_subalg</span></code> which saves the <a class="reference external" href="http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.12/share/doc/Macaulay2/Normaliz/html/___Monomial__Subalgebra.html">MonomialSubalgebra</a> object,
+this method returns <code class="docutils literal notranslate"><span class="pre">AffineMonoid</span></code> object corresponding to the <a class="reference external" href="http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.12/share/doc/Macaulay2/Normaliz/html/___Monomial__Subalgebra.html">MonomialSubalgebra</a>.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">var_name</span></code> – A <code class="docutils literal notranslate"><span class="pre">string</span></code> object which equal to the variable name of a <cite>MonomialSubalgebra</cite> class variable created by <code class="docutils literal notranslate"><span class="pre">Normaliz</span></code> package in <a class="reference external" href="http://www.math.uiuc.edu/Macaulay2/">Macaulay2</a>.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>An <code class="docutils literal notranslate"><span class="pre">AffineMonoid</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">from_macaulay2</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">macaulay2</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s1">&#39;ZZ[x,y,z]&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">macaulay2</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s2">&quot;loadPackage Normaliz&quot;</span><span class="p">)</span>
+<span class="n">Normaliz</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">macaulay2</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s1">&#39;S=createMonomialSubalgebra {x^5*y, y*z^2, z^3}&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">=</span><span class="n">from_macaulay2</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span>
+<span class="n">An</span> <span class="n">affine</span> <span class="n">semigroup</span> <span class="n">whose</span> <span class="n">generating</span> <span class="nb">set</span> <span class="ow">is</span>
+<span class="p">[[</span><span class="mi">5</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="stdpairs.to_macaulay2">
+<code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">to_macaulay2</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monomial_ideal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ring_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'R'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ideal_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'I'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_cover_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SC'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.to_macaulay2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a <code class="docutils literal notranslate"><span class="pre">MonomialIdeal</span></code> object <code class="docutils literal notranslate"><span class="pre">monomial_ideal</span></code>,
+this method returns a <code class="docutils literal notranslate"><span class="pre">dictionary</span></code> object containing the ambient monoid, the given monomial ideal, and its standard cover as <code class="docutils literal notranslate"><span class="pre">string</span></code> objects.
+Users can access those <code class="docutils literal notranslate"><span class="pre">Macaulay2</span></code> variables using <code class="docutils literal notranslate"><span class="pre">ring_name</span></code>, <code class="docutils literal notranslate"><span class="pre">ideal_name</span></code>, and <code class="docutils literal notranslate"><span class="pre">std_cover_name</span></code>.
+Notes that the ambient monoid and the monomial ideal will be delivered as
+<code class="docutils literal notranslate"><span class="pre">macaulay2</span></code> type object, especially with <a class="reference external" href="http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.12/share/doc/Macaulay2/Normaliz/html/___Monomial__Subalgebra.html">MonomialSubalgebra</a>  type.
+See <a class="reference external" href="http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.12/share/doc/Macaulay2/Normaliz/html/___Monomial__Subalgebra.html">MonomialSubalgebra</a> for detail.
+The standard cover will be delivered as a <code class="docutils literal notranslate"><span class="pre">list</span></code> object in Macaulay 2. Also, this method will executes <code class="docutils literal notranslate"><span class="pre">monomial_ideal.standard_cover()</span></code> if it was not executed previously.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">monomial_ideal</span></code> – A <code class="docutils literal notranslate"><span class="pre">MonomialIdeal</span></code> type object.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">dictionary</span></code> object as below.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s1">&#39;AffineSemigroupRing&#39;</span><span class="p">:</span><span class="n">mac2_mon_subalg</span><span class="p">,</span> <span class="s1">&#39;MonomialIdeal&#39;</span><span class="p">:</span><span class="n">mac2_mon_sub_alg_ideal</span><span class="p">,</span> <span class="s1">&#39;StandardCover&#39;</span><span class="p">:</span><span class="n">mac2_std_cover</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">mac2_mon_subalg</span></code>, <code class="docutils literal notranslate"><span class="pre">mac2_mon_sub_alg_ideal</span></code>, and <code class="docutils literal notranslate"><span class="pre">mac2_std_cover</span></code> are <code class="docutils literal notranslate"><span class="pre">string</span></code> object.</p>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span><span class="n">MonomialIdeal</span><span class="p">,</span> <span class="n">to_macaulay2</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">=</span><span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span><span class="o">=</span><span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]]),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">S</span><span class="o">=</span><span class="n">to_macaulay2</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">S</span>
+<span class="p">{</span><span class="s1">&#39;AffineSemigroupRing&#39;</span><span class="p">:</span> <span class="n">ZZ</span><span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">]</span>
+
+<span class="n">monomial</span> <span class="n">subalgebra</span> <span class="n">of</span> <span class="n">RINGR</span><span class="p">,</span>
+<span class="s1">&#39;MonomialIdeal&#39;</span><span class="p">:</span>   <span class="mi">2</span> <span class="mi">2</span>   <span class="mi">2</span>   <span class="mi">2</span>   <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="p">{</span><span class="n">a</span> <span class="n">c</span> <span class="p">,</span> <span class="n">a</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span> <span class="p">,</span> <span class="n">a</span> <span class="n">b</span> <span class="n">c</span> <span class="p">}</span>
+
+<span class="n">List</span><span class="p">,</span>
+<span class="s1">&#39;StandardCover&#39;</span><span class="p">:</span> <span class="p">{{</span><span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="p">{</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">}},</span> <span class="p">{</span><span class="n">a</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="p">{</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">}},</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">}}}</span>
+
+<span class="n">List</span><span class="p">}</span>
+<span class="c1"># To access values in dictionary via Macaulay2,</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">macaulay2</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
+<span class="n">ZZ</span><span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">]</span>
+
+<span class="n">monomial</span> <span class="n">subalgebra</span> <span class="n">of</span> <span class="n">PolyRing</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">macaulay2</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">)</span>
+  <span class="mi">2</span> <span class="mi">2</span>   <span class="mi">2</span>   <span class="mi">2</span>   <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="p">{</span><span class="n">a</span> <span class="n">c</span> <span class="p">,</span> <span class="n">a</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span> <span class="p">,</span> <span class="n">a</span> <span class="n">b</span> <span class="n">c</span> <span class="p">}</span>
+
+<span class="n">List</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">macaulay2</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="s2">&quot;SC&quot;</span><span class="p">)</span>
+<span class="p">{{</span><span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="p">{</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">}},</span> <span class="p">{</span><span class="n">a</span><span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="p">{</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">}},</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="o">*</span><span class="n">c</span><span class="p">}}}</span>
+
+<span class="n">List</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="save-and-load-via-string">
+<h2>Save and load via <code class="docutils literal notranslate"><span class="pre">string</span></code><a class="headerlink" href="#save-and-load-via-string" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SageMath</span></code> provide a global function writing and reading objects as a binary file by  <a class="reference external" href="https://doc.sagemath.org/html/en/reference/misc/sage/misc/persist.html">pickling</a>. However, it may not work in case Sage code for the package is dramatically changed. To avoid such a catastrophy, we provides some global functions which may save and load your calculation about the monomial ideal objects easily.</p>
+<dl class="py function">
+<dt id="stdpairs.txt_to_affinemonoid">
+<code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">txt_to_affinemonoid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.txt_to_affinemonoid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a string <code class="docutils literal notranslate"><span class="pre">text_info</span></code> generated by a method  <code class="docutils literal notranslate"><span class="pre">save_txt()</span></code> of an <code class="docutils literal notranslate"><span class="pre">AffineMonoid</span></code> object,
+this method returns an <code class="docutils literal notranslate"><span class="pre">AffineMonoid</span></code> object which is the same as the original <code class="docutils literal notranslate"><span class="pre">AffineMonoid</span></code> object.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">text_info</span></code> – A <code class="docutils literal notranslate"><span class="pre">string</span></code> objct generated by the method <code class="docutils literal notranslate"><span class="pre">AffineMonoid.save_txt()</span></code>.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>An <code class="docutils literal notranslate"><span class="pre">AffineMonoid</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span> <span class="n">txt_to_affinemonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">save_txt</span><span class="p">()</span>
+<span class="s1">&#39;Q</span><span class="se">\n</span><span class="s1">2,0,1|0,1,1</span><span class="se">\n</span><span class="s1">&#39;</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">L</span> <span class="o">=</span> <span class="n">txt_to_affinemonoid</span><span class="p">(</span><span class="s1">&#39;Q</span><span class="se">\n</span><span class="s1">2,0,1|0,1,1</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">==</span> <span class="n">L</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="stdpairs.txt_to_monomialideal">
+<code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">txt_to_monomialideal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.txt_to_monomialideal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a string <code class="docutils literal notranslate"><span class="pre">text_info</span></code> generated by <code class="docutils literal notranslate"><span class="pre">MonomialIdeal.save_txt()</span></code> method,
+returns an <code class="docutils literal notranslate"><span class="pre">MonomialIdeal</span></code> object which is the same as the original <code class="docutils literal notranslate"><span class="pre">MonomialIdeal</span></code> object.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">text_info</span></code> – A <code class="docutils literal notranslate"><span class="pre">string</span></code> objct generated by the method <code class="docutils literal notranslate"><span class="pre">MonomialIdeal.save_txt()</span></code>.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>An <code class="docutils literal notranslate"><span class="pre">MonomialIdeal</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span> <span class="n">MonomialIdeal</span><span class="p">,</span> <span class="n">txt_to_monomialideal</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span> <span class="o">=</span> <span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]]),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span><span class="o">.</span><span class="n">standard_cover</span><span class="p">()</span>
+<span class="n">Calculate</span> <span class="n">the</span> <span class="n">standard</span> <span class="n">cover</span> <span class="n">of</span> <span class="n">an</span> <span class="n">ideal</span>
+<span class="n">It</span> <span class="n">takes</span> <span class="n">a</span> <span class="n">few</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">depending</span> <span class="n">on</span> <span class="n">the</span> <span class="n">system</span><span class="o">.</span>
+<span class="n">Cover</span> <span class="k">for</span> <span class="mi">1</span>  <span class="n">generator</span> <span class="n">was</span> <span class="n">calculated</span><span class="o">.</span>  <span class="mi">2</span>  <span class="n">generators</span> <span class="n">remaining</span><span class="o">.</span>
+<span class="n">Cover</span> <span class="k">for</span> <span class="mi">2</span>  <span class="n">generators</span> <span class="n">was</span> <span class="n">calculated</span><span class="o">.</span>  <span class="mi">1</span>  <span class="n">generators</span> <span class="n">remaining</span><span class="o">.</span>
+<span class="n">Cover</span> <span class="k">for</span> <span class="mi">3</span>  <span class="n">generators</span> <span class="n">was</span> <span class="n">calculated</span><span class="o">.</span>  <span class="mi">0</span>  <span class="n">generators</span> <span class="n">remaining</span><span class="o">.</span>
+<span class="p">{(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span> <span class="p">[[([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])],</span>
+<span class="p">[([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+ <span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])]]}</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">str_I</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">save_txt</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">J</span> <span class="o">=</span> <span class="n">txt_to_monomialideal</span><span class="p">(</span><span class="n">str_I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">J</span> <span class="o">==</span> <span class="n">I</span>
+<span class="kc">True</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">J</span><span class="o">.</span><span class="n">standard_cover</span><span class="p">()</span>
+<span class="c1"># This does not require re-calculation.</span>
+<span class="p">{(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span> <span class="p">[([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+  <span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+  <span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">^</span><span class="n">T</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])]}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="support.html" class="btn btn-neutral float-right" title="Support" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="properpair.html" class="btn btn-neutral float-left" title="ProperPair Class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Byeongsu Yu.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

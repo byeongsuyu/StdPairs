@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>ProperPair Class &mdash; StdPairs 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Global functions" href="globalfunctions.html" />
+    <link rel="prev" title="MonomialIdeal Class" href="monomialideal.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> StdPairs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Module contents</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="affinemonoid.html">AffineMonoid Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="monomialideal.html">MonomialIdeal Class</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ProperPair Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalfunctions.html">Global functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">StdPairs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="api.html">Module contents</a> &raquo;</li>
+        
+      <li>ProperPair Class</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/properpair.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="properpair-class">
+<h1>ProperPair Class<a class="headerlink" href="#properpair-class" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="stdpairs.ProperPair">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">ProperPair</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monomial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ambient_ideal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class representing a proper pair with respect to given monomial ideal <span class="math notranslate nohighlight">\(I\)</span>, which is a pair <span class="math notranslate nohighlight">\((a,F)\)</span> where <span class="math notranslate nohighlight">\(a\)</span> is a monomial
+in the ambient affine monoid, and <span class="math notranslate nohighlight">\(F\)</span> denotes a face such that <span class="math notranslate nohighlight">\(a+\mathbb{N}F \cap I = \emptyset\)</span>.
+Or, abusively, this class also generated without checking the condition <span class="math notranslate nohighlight">\(a+\mathbb{N}F \cap I = \emptyset\)</span> using <code class="docutils literal notranslate"><span class="pre">properness</span></code> argument.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">monomial</span></code> – A <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object with 2-dimensional shape and integer elements or <code class="docutils literal notranslate"><span class="pre">sage.matrix.matrix_integer_dense</span></code> type variable. In any cases, this argument should have only one column.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">face</span></code> – A <code class="docutils literal notranslate"><span class="pre">tuple</span></code> object representing a face in <code class="docutils literal notranslate"><span class="pre">ambient_ideal.ambient_monoid()</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ambient_ideal</span></code> – A <code class="docutils literal notranslate"><span class="pre">MonomialIdeal</span></code> object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">properness=False</span></code> – A <code class="docutils literal notranslate"><span class="pre">bool</span></code> object. If this argument is <code class="docutils literal notranslate"><span class="pre">True</span></code>, then this class does not give an error even if <span class="math notranslate nohighlight">\(a+\mathbb{N}F \cap I\)</span> is nonempty.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ProperPair</span></code> object <span class="math notranslate nohighlight">\((a,F)\)</span> whose <span class="math notranslate nohighlight">\(a\)</span> is <code class="docutils literal notranslate"><span class="pre">monomial</span></code> argument and <span class="math notranslate nohighlight">\(F\)</span> is <code class="docutils literal notranslate"><span class="pre">face</span></code> argument.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span> <span class="n">MonomialIdeal</span><span class="p">,</span> <span class="n">ProperPair</span>
+<span class="n">sage</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">numpy</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">M</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span> <span class="o">=</span> <span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">Q</span><span class="p">)</span>
+<span class="c1">#Using ``NumPy``</span>
+<span class="c1"># Below ``P`` is a proper pair.</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">I</span><span class="p">)</span>
+<span class="c1"># But below ``Not_P`` raise error that this is not a proper pair.</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Not_P</span> <span class="o">=</span><span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">I</span><span class="p">)</span>
+<span class="c1"># However, using ``properness`` as ``True`` the same construction does not give you error;</span>
+<span class="c1"># Basically the module does not check whether the given pair is proper or not.</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Not_P</span> <span class="o">=</span><span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">I</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span> <span class="n">MonomialIdeal</span><span class="p">,</span> <span class="n">ProperPair</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">M</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span> <span class="o">=</span> <span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">Q</span><span class="p">)</span>
+<span class="c1">#Using ``NumPy``</span>
+<span class="c1"># Below ``P`` is a proper pair.</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">I</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>TESTS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span> <span class="o">=</span> <span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]]),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="k">if</span> <span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">is_maximal</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="o">....</span><span class="p">:</span>     <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;Method is_maximal() is problematic; please report it to the developer.&quot;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,),</span> <span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="k">if</span> <span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">is_maximal</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="o">....</span><span class="p">:</span>     <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;Method is_maximal() is problematic; please report it to the developer.&quot;</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="k">if</span> <span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">is_maximal</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="o">....</span><span class="p">:</span>     <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;Method is_maximal() is problematic; please report it to the developer.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="stdpairs.ProperPair.ambient_ideal">
+<code class="sig-name descname"><span class="pre">ambient_ideal</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.ambient_ideal" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns an ideal which decides whether <code class="docutils literal notranslate"><span class="pre">self</span></code> is proper (i.e., a translation of submonoid does not intersect with the ideal) or not. This was given when <code class="docutils literal notranslate"><span class="pre">self</span></code> was created.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ambient_ideal</span></code> – A <code class="docutils literal notranslate"><span class="pre">MonomialIdeal</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span> <span class="n">MonomialIdeal</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">=</span><span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span><span class="o">=</span><span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]]),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">=</span><span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]),(</span><span class="mi">0</span><span class="p">,),</span><span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">ambient_ideal</span><span class="p">()</span>
+<span class="n">An</span> <span class="n">ideal</span> <span class="n">whose</span> <span class="n">generating</span> <span class="nb">set</span> <span class="ow">is</span>
+<span class="p">[[</span><span class="mi">4</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">4</span><span class="p">]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.ProperPair.face">
+<code class="sig-name descname"><span class="pre">face</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.face" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the face of <code class="docutils literal notranslate"><span class="pre">self</span></code> as a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> object.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gens</span></code> – A <code class="docutils literal notranslate"><span class="pre">tuple</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span> <span class="n">MonomialIdeal</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">=</span><span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span><span class="o">=</span><span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]]),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">=</span><span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]),(</span><span class="mi">0</span><span class="p">,),</span><span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">face</span><span class="p">()</span>
+<span class="p">(</span><span class="mi">0</span><span class="p">,)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">face</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
+<span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.ProperPair.is_element">
+<code class="sig-name descname"><span class="pre">is_element</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_monomial</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.is_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given <code class="docutils literal notranslate"><span class="pre">a_monomial</span></code> monomial, say <span class="math notranslate nohighlight">\(b\)</span>, in the ambient monoid, find a matrix whose row <span class="math notranslate nohighlight">\(u\)</span> is a solution of
+<span class="math notranslate nohighlight">\(F*u =b-a\)</span> where <span class="math notranslate nohighlight">\((a,F)\)</span> is the give proper pair <code class="docutils literal notranslate"><span class="pre">self</span></code>. In other words, if <code class="docutils literal notranslate"><span class="pre">a_monomial</span></code> in <span class="math notranslate nohighlight">\(a+\mathbb{N}F\)</span>, return a matrix
+whose row <span class="math notranslate nohighlight">\(u\)</span> satisfies <span class="math notranslate nohighlight">\(a+F*u=b\)</span>. Otherwise, return an empty matrix.</p>
+<p>INPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">a_monomial</span></code> – A <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object with 2-dimensional shape, integer elements, and only one vector, or <code class="docutils literal notranslate"><span class="pre">sage.matrix.matrix_integer_dense</span></code> object with one column.</p></li>
+</ul>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">sage.matrix.matrix_integer_dense</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">=</span><span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span><span class="o">=</span><span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]]),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]),(</span><span class="mi">1</span><span class="p">,),</span><span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">is_element</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">8</span><span class="p">],[</span><span class="mi">8</span><span class="p">]]))</span>
+<span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="c1"># This means that [[8],[8]]- [[2],[2]] = 3*[[2],[2]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">is_element</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">7</span><span class="p">],[</span><span class="mi">7</span><span class="p">]]))</span>
+<span class="p">[]</span>
+<span class="c1"># This does not have solution since [[7],[7]] cannot be obtained by integer.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.ProperPair.is_maximal">
+<code class="sig-name descname"><span class="pre">is_maximal</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.is_maximal" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if and only if a pair is maximal with respect to divisibility. A proper pair <span class="math notranslate nohighlight">\((a,F)\)</span> is maximal with respect to divisibility
+if for any proper pair <span class="math notranslate nohighlight">\((b,G)\)</span> there is no such element <span class="math notranslate nohighlight">\(c\)</span> in the ambient affine monoid such that <span class="math notranslate nohighlight">\(a+c+\mathbb{N}F \subseteq b+\mathbb{N}G\)</span>.
+Notes that this function is not properly working if you generated the given pair with properness=`False` argument.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p>A <code class="docutils literal notranslate"><span class="pre">bool</span></code> object.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span> <span class="o">=</span> <span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]]),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,),</span> <span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">is_maximal</span><span class="p">()</span>
+<span class="kc">False</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span> <span class="o">=</span> <span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">is_maximal</span><span class="p">()</span>
+<span class="kc">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="stdpairs.ProperPair.monomial">
+<code class="sig-name descname"><span class="pre">monomial</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.monomial" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the monomial of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<p>OUTPUT:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">monomial</span></code> – A <code class="docutils literal notranslate"><span class="pre">NumPy.ndarray</span></code> object with 2-dimensional shape, integer elements, and only one column.</p></li>
+</ul>
+<p>EXAMPLE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span><span class="p">,</span> <span class="n">MonomialIdeal</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">=</span><span class="n">AffineMonoid</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]]))</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">I</span><span class="o">=</span><span class="n">MonomialIdeal</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]]),</span><span class="n">Q</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">=</span><span class="n">ProperPair</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">]]),(</span><span class="mi">0</span><span class="p">,),</span><span class="n">I</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">monomial</span><span class="p">()</span>
+<span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="globalfunctions.html" class="btn btn-neutral float-right" title="Global functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="monomialideal.html" class="btn btn-neutral float-left" title="MonomialIdeal Class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Byeongsu Yu.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
