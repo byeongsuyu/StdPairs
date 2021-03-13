@@ -1,0 +1,17 @@
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+stdpairs/__init__.py
+stdpairs/_stdpairs.py
+stdpairs/_string_interface.py
+stdpairs/_zsolve_interface.py
+stdpairs/affinemonoid.py
+stdpairs/macaulay2_interface.py
+stdpairs/monomialideal.py
+stdpairs/properpair.py
+stdpairs/txt_to_object.py
+stdpairs.egg-info/PKG-INFO
+stdpairs.egg-info/SOURCES.txt
+stdpairs.egg-info/dependency_links.txt
+stdpairs.egg-info/top_level.txt
