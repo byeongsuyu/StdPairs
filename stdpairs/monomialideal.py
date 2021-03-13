@@ -239,7 +239,9 @@ class MonomialIdeal:
             Cover for 2  generators was calculated.  0  generators remaining. 
             {(0,): [([[0], [0]]^T,[[1], [0]])], (): [([[2], [2]]^T,[[], []])]}
 
-        TESTS::
+        Below is an example for comparing `standardPairs <https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.15/share/doc/Macaulay2/Macaulay2Doc/html/_standard__Pairs.html>`_ function in `Macaulay2 <http://www.math.uiuc.edu/Macaulay2/>`_ and that of ``self.standard_cover()``
+
+        EXAMPLE::
             
             sage: print("test MonomialIdeal.standard_cover() . . . .", end="")
             sage: from stdpairs import AffineMonoid, MonomialIdeal                          
