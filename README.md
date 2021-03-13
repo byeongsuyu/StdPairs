@@ -17,7 +17,7 @@ Minimum requirement
 Documentation
 ------------------------------------
 
-[Documentation](https://github.com/byeongsuyu/StdPairs/docs/_build/html/index.html) 
+[Documentation](https://byeongsuyu.github.io/StdPairs/)
 
 
 Copyright & License
