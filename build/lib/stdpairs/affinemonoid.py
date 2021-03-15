@@ -49,10 +49,11 @@ class AffineMonoid():
 
     ::
 
+        sage: #Using ``NumPy``
         sage: from stdpairs import AffineMonoid
         sage: import numpy
-        #Using ``NumPy``
         sage: A = numpy.array([[1,2],[0,2]])
+        sage: A
         array([[1, 2],
                [0, 2]])
         sage: Q = AffineMonoid(A)
@@ -63,14 +64,33 @@ class AffineMonoid():
 
     ::
 
+        sage: #Using ``sage.matrix.matrix_integer_dense``
         sage: from stdpairs import AffineMonoid
-        sage: import numpy
-        #Using ``sage.matrix.matrix_integer_dense``
         sage: A = matrix(ZZ,[[1,2],[0,2]])
         sage: Q = AffineMonoid(A)
+        sage: Q
         An affine semigroup whose generating set is 
         [[1 2]
          [0 2]]
+
+    ::
+
+        sage: #Turn on Normaliz and execute its method.
+        sage: # Be careful that Normaliz does not distinguish 
+        sage: # non-normal semigroup from its saturated one.
+        sage: from stdpairs import AffineMonoid
+        sage: A = matrix(ZZ,[[1,2],[0,2]])
+        sage: Q = AffineMonoid(A, True)
+        sage: Q
+        An affine semigroup whose generating set is 
+        [[1 2]
+         [0 2]]
+        sage: Q.poly().hilbert_series([1,0])
+        1/(t^2 - 2*t + 1)
+        sage: A = matrix(ZZ,[[1,1],[0,1]])                                              
+        sage: Q = AffineMonoid(A, True)                                                 
+        sage: Q.poly().hilbert_series([1,0])                                            
+        1/(t^2 - 2*t + 1)
 
     TESTS::
             
@@ -159,9 +179,6 @@ class AffineMonoid():
         del lattice_dict
         del lattice
         
-        # This attribute is for hash
-        # Initialize
-        self.hashstring=''
         # Calculate minimal generators
         if self.__is_zeromonoid_bool:
             self.__mingens = self.__gens
@@ -186,11 +203,13 @@ class AffineMonoid():
             sage: A = matrix(ZZ, [[1,2,7],[0,2,4]]) 
             sage: Q = AffineMonoid(A)
             sage: Q.index_to_face()
-            {(-1,): A -1-dimensional face of a Polyhedron in ZZ^2,
-             (): A 0-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 1 vertex,
+            {(): A 0-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 1 vertex,
+             (-1,): A -1-dimensional face of a Polyhedron in ZZ^2,
              (0,): A 1-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 1 ray,
-             (1,): A 1-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 1 ray,
-             (0,1,2): A 2-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 2 rays}
+             (0,
+              1,
+              2): A 2-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 2 rays,
+             (1,): A 1-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 1 ray}
 
         """
         return self.__index_to_face
@@ -209,10 +228,10 @@ class AffineMonoid():
             sage: Q = AffineMonoid(A)
             sage: Q.integral_support_vectors()
             {(): array([[ 1, -1],
-                        [ 0,  1]]),
+                    [ 0,  1]]),
              (0,): array([[0, 1]]),
-             (1,): array([[ 1, -1]]),
-             (0, 1, 2): array([], dtype=float64)}
+             (0, 1, 2): array([], dtype=int64),
+             (1,): array([[ 1, -1]])}
 
         """
         return self.__integral_support_vectors
@@ -226,7 +245,9 @@ class AffineMonoid():
 
         - ``poly`` -- A ``sage.geometry.polyhedron.parent.Polyhedra_ZZ_ppl_with_category`` object.
 
-        EXAMPLE::
+        EXAMPLE:
+
+        ::
 
             sage: from stdpairs import AffineMonoid
             sage: A = matrix(ZZ, [[1,2,7],[0,2,4]]) 
@@ -237,7 +258,18 @@ class AffineMonoid():
             sage: R = AffineMonoid(B)
             sage: Q.poly() == R.poly()                                                      
             True
-            # They are differ as a polyhedron over ZZ, but the same as an object in SageMath.
+            sage: # They are differ as a polyhedron over ZZ, but the same as an object in SageMath.
+
+        Especially, if you turn on Normaliz option by construction of your affine semigroup, then you can use all methods in normaliz. For example,
+
+        ::
+
+            sage: A = matrix(ZZ,[[1,1],[0,1]])                                              
+            sage: Q = AffineMonoid(A, True)                                                 
+            sage: Q.poly().hilbert_series([1,0])                                            
+            1/(t^2 - 2*t + 1)
+
+        Be careful that Normaliz does not distinguish a non-normal affine semigroup with its saturated one.
 
         """
         return self.__poly
@@ -277,7 +309,7 @@ class AffineMonoid():
             sage: from stdpairs import AffineMonoid
             sage: A = matrix(ZZ, [[1,2,7],[0,2,4]])
             sage: Q = AffineMonoid(A) 
-            sage: Q.gens()
+            sage: Q.mingens()
             array([[1, 2],
                    [0, 2]])
 
@@ -368,7 +400,7 @@ class AffineMonoid():
             sage: A = matrix(ZZ, [[1,2,7],[0,2,4]])                                         
             sage: Q = AffineMonoid(A)                                                       
             sage: Q.save('~/test.sobj')
-            # If you want to load the saved one
+            sage: # If you want to load the saved one
             sage: R = load(str(Path.home())+'/test.sobj')
             sage: R == Q
             True
@@ -408,8 +440,7 @@ class AffineMonoid():
             sage: Q.face((0,1,2))                                                           
             array([[1, 2, 7],
                    [0, 2, 4]])
-            sage: Q.face((0,1))
-            # Gives an error since the third column also inside of the non-proper face represented by (0,1,2).
+            
         """
         if not isinstance(index,tuple):
             raise ValueError("[Error]:Instance is not a tuple.")
@@ -569,8 +600,7 @@ class AffineMonoid():
             sage: for permutation in G: 
             ....:     if (Q== AffineMonoid(A*permutation)) == False: 
             ....:         raise SyntaxError("[Error]: __eq__ does not work properly.")
-            ....:                                                                           
-            sage:  
+            
         """
         if not isinstance(other, type(self)): return NotImplemented
         return _zsolve_interface._check_swap_column_equivalence(self.mingens(), other.mingens())

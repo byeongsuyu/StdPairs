@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="globalfunctions.html">Global functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="test.html">Test StdPairs package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
 </ul>
 
@@ -184,10 +185,11 @@ a matrix over <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> a
 <li><p>An <code class="docutils literal notranslate"><span class="pre">AffineMonoid</span></code> object whose generating set is <code class="docutils literal notranslate"><span class="pre">genset</span></code>.</p></li>
 </ul>
 <p>EXAMPLE:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="c1">#Using ``NumPy``</span>
+<span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
 <span class="n">sage</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">numpy</span>
-<span class="c1">#Using ``NumPy``</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span>
 <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
@@ -197,14 +199,32 @@ a matrix over <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> a
  <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span><span class="p">]]</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
-<span class="n">sage</span><span class="p">:</span> <span class="kn">import</span> <span class="nn">numpy</span>
-<span class="c1">#Using ``sage.matrix.matrix_integer_dense``</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="c1">#Using ``sage.matrix.matrix_integer_dense``</span>
+<span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span>
 <span class="n">An</span> <span class="n">affine</span> <span class="n">semigroup</span> <span class="n">whose</span> <span class="n">generating</span> <span class="nb">set</span> <span class="ow">is</span>
 <span class="p">[[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">]</span>
  <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span><span class="p">]]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="c1">#Turn on Normaliz and execute its method.</span>
+<span class="n">sage</span><span class="p">:</span> <span class="c1"># Be careful that Normaliz does not distinguish</span>
+<span class="n">sage</span><span class="p">:</span> <span class="c1"># non-normal semigroup from its saturated one.</span>
+<span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span>
+<span class="n">An</span> <span class="n">affine</span> <span class="n">semigroup</span> <span class="n">whose</span> <span class="n">generating</span> <span class="nb">set</span> <span class="ow">is</span>
+<span class="p">[[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">0</span> <span class="mi">2</span><span class="p">]]</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">poly</span><span class="p">()</span><span class="o">.</span><span class="n">hilbert_series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">t</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">poly</span><span class="p">()</span><span class="o">.</span><span class="n">hilbert_series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">t</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>TESTS:</p>
@@ -238,8 +258,6 @@ a matrix over <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> a
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">face</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
 <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
-<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">face</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
-<span class="c1"># Gives an error since the third column also inside of the non-proper face represented by (0,1,2).</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -321,11 +339,13 @@ In case of the pointed affine monoid, use <code class="docutils literal notransl
 <span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">index_to_face</span><span class="p">()</span>
-<span class="p">{(</span><span class="o">-</span><span class="mi">1</span><span class="p">,):</span> <span class="n">A</span> <span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span><span class="p">,</span>
- <span class="p">():</span> <span class="n">A</span> <span class="mi">0</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span><span class="p">,</span>
+<span class="p">{():</span> <span class="n">A</span> <span class="mi">0</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span><span class="p">,</span>
+ <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,):</span> <span class="n">A</span> <span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span><span class="p">,</span>
  <span class="p">(</span><span class="mi">0</span><span class="p">,):</span> <span class="n">A</span> <span class="mi">1</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span> <span class="ow">and</span> <span class="mi">1</span> <span class="n">ray</span><span class="p">,</span>
- <span class="p">(</span><span class="mi">1</span><span class="p">,):</span> <span class="n">A</span> <span class="mi">1</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span> <span class="ow">and</span> <span class="mi">1</span> <span class="n">ray</span><span class="p">,</span>
- <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span> <span class="n">A</span> <span class="mi">2</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">rays</span><span class="p">}</span>
+ <span class="p">(</span><span class="mi">0</span><span class="p">,</span>
+  <span class="mi">1</span><span class="p">,</span>
+  <span class="mi">2</span><span class="p">):</span> <span class="n">A</span> <span class="mi">2</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span> <span class="ow">and</span> <span class="mi">2</span> <span class="n">rays</span><span class="p">,</span>
+ <span class="p">(</span><span class="mi">1</span><span class="p">,):</span> <span class="n">A</span> <span class="mi">1</span><span class="o">-</span><span class="n">dimensional</span> <span class="n">face</span> <span class="n">of</span> <span class="n">a</span> <span class="n">Polyhedron</span> <span class="ow">in</span> <span class="n">ZZ</span><span class="o">^</span><span class="mi">2</span> <span class="n">defined</span> <span class="k">as</span> <span class="n">the</span> <span class="n">convex</span> <span class="n">hull</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">vertex</span> <span class="ow">and</span> <span class="mi">1</span> <span class="n">ray</span><span class="p">}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -344,10 +364,10 @@ In case of the pointed affine monoid, use <code class="docutils literal notransl
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">integral_support_vectors</span><span class="p">()</span>
 <span class="p">{():</span> <span class="n">array</span><span class="p">([[</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-            <span class="p">[</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">]]),</span>
+        <span class="p">[</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">]]),</span>
  <span class="p">(</span><span class="mi">0</span><span class="p">,):</span> <span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
- <span class="p">(</span><span class="mi">1</span><span class="p">,):</span> <span class="n">array</span><span class="p">([[</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]),</span>
- <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float64</span><span class="p">)}</span>
+ <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">),</span>
+ <span class="p">(</span><span class="mi">1</span><span class="p">,):</span> <span class="n">array</span><span class="p">([[</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -428,7 +448,7 @@ then return the generating set with warning message.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">stdpairs</span> <span class="kn">import</span> <span class="n">AffineMonoid</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">gens</span><span class="p">()</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">mingens</span><span class="p">()</span>
 <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
 </pre></div>
@@ -455,9 +475,17 @@ See <a class="reference external" href="https://doc.sagemath.org/html/en/referen
 <span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">poly</span><span class="p">()</span> <span class="o">==</span> <span class="n">R</span><span class="o">.</span><span class="n">poly</span><span class="p">()</span>
 <span class="kc">True</span>
-<span class="c1"># They are differ as a polyhedron over ZZ, but the same as an object in SageMath.</span>
+<span class="n">sage</span><span class="p">:</span> <span class="c1"># They are differ as a polyhedron over ZZ, but the same as an object in SageMath.</span>
 </pre></div>
 </div>
+<p>Especially, if you turn on Normaliz option by construction of your affine semigroup, then you can use all methods in normaliz. For example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">poly</span><span class="p">()</span><span class="o">.</span><span class="n">hilbert_series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">t</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Be careful that Normaliz does not distinguish a non-normal affine semigroup with its saturated one.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -474,7 +502,7 @@ See <a class="reference external" href="https://doc.sagemath.org/html/en/referen
 <span class="n">sage</span><span class="p">:</span> <span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">AffineMonoid</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">Q</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;~/test.sobj&#39;</span><span class="p">)</span>
-<span class="c1"># If you want to load the saved one</span>
+<span class="n">sage</span><span class="p">:</span> <span class="c1"># If you want to load the saved one</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">())</span><span class="o">+</span><span class="s1">&#39;/test.sobj&#39;</span><span class="p">)</span>
 <span class="n">sage</span><span class="p">:</span> <span class="n">R</span> <span class="o">==</span> <span class="n">Q</span>
 <span class="kc">True</span>

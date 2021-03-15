@@ -52,15 +52,14 @@ class ProperPair:
         sage: Q = AffineMonoid(A)
         sage: M = matrix(ZZ,[[4,6],[4,6]])
         sage: I = MonomialIdeal(M,Q)
-        #Using ``NumPy``
-        # Below ``P`` is a proper pair.
+        sage: #Using ``NumPy``
+        sage: # Below ``P`` is a proper pair.
         sage: P = ProperPair(numpy.array([[2],[2]]), (0,), I)
-        # But below ``Not_P`` raise error that this is not a proper pair.
-        sage: Not_P =ProperPair(matrix(ZZ,[[2],[2]]), (1,), I)
-        # However, using ``properness`` as ``True`` the same construction does not give you error;
-        # Basically the module does not check whether the given pair is proper or not.
+        sage: # But below ``Not_P`` raise error that this is not a proper pair.
+        sage: # Not_P =ProperPair(matrix(ZZ,[[2],[2]]), (1,), I)
+        sage: # However, using ``properness`` as ``True`` the same construction does not give you error;
+        sage: # Basically the module does not check whether the given pair is proper or not.
         sage: Not_P =ProperPair(matrix(ZZ,[[2],[2]]), (1,), I,True) 
-        sage:
         
     ::
 
@@ -69,13 +68,13 @@ class ProperPair:
         sage: Q = AffineMonoid(A)
         sage: M = matrix(ZZ,[[4,6],[4,6]])
         sage: I = MonomialIdeal(M,Q)
-        #Using ``NumPy``
-        # Below ``P`` is a proper pair.
+        sage: #Using ``NumPy``
+        sage: # Below ``P`` is a proper pair.
         sage: P = ProperPair(matrix(ZZ,[[2],[2]]), (0,), I)
 
     TESTS::
             
-        sage: from stdpairs import AffineMonoid
+        sage: from stdpairs import AffineMonoid, MonomialIdeal, ProperPair
         sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
         sage: Q = AffineMonoid(A)
         sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
@@ -142,7 +141,7 @@ class ProperPair:
 
         EXAMPLE::
 
-            sage: from stdpairs import AffineMonoid, MonomialIdeal
+            sage: from stdpairs import AffineMonoid, MonomialIdeal, ProperPair
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[4,6],[4,6]]),Q)
             sage: P=ProperPair(matrix(ZZ,[[2],[2]]),(0,),I)
@@ -162,7 +161,7 @@ class ProperPair:
 
         EXAMPLE::
 
-            sage: from stdpairs import AffineMonoid, MonomialIdeal
+            sage: from stdpairs import AffineMonoid, MonomialIdeal, ProperPair
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[4,6],[4,6]]),Q)
             sage: P=ProperPair(matrix(ZZ,[[2],[2]]),(0,),I)
@@ -183,7 +182,7 @@ class ProperPair:
 
         EXAMPLE::
 
-            sage: from stdpairs import AffineMonoid, MonomialIdeal
+            sage: from stdpairs import AffineMonoid, MonomialIdeal, ProperPair
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[4,6],[4,6]]),Q)
             sage: P=ProperPair(matrix(ZZ,[[2],[2]]),(0,),I)
@@ -205,7 +204,7 @@ class ProperPair:
 
         EXAMPLE::
 
-            sage: from stdpairs import AffineMonoid
+            sage: from stdpairs import AffineMonoid, MonomialIdeal, ProperPair
             sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
             sage: Q = AffineMonoid(A)
             sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
@@ -220,7 +219,7 @@ class ProperPair:
         if self.__bool_is_maximal_with_divisibility_calculated:
             return self.__bool_is_maximal_with_divisibility
         if self.__checking_well_defined == False:
-            warnings.warn("[Warning]: Since the pair itself may not proper, the result may false.")
+            warnings.warn("[Warning]: Since the pair itself may not proper, it is impossible to check maximality with respect to divisibility.")
         else:
             top_face = (((self.__ambient_ideal.ambient_monoid()).face_lattice()).maximal_elements())[0]
             parity = 0; # Check whether we have proper pair divisible by given std pair.
@@ -253,16 +252,17 @@ class ProperPair:
         - A ``sage.matrix.matrix_integer_dense`` object.
 
         EXAMPLE::
-
+            
+            sage: from stdpairs import AffineMonoid, MonomialIdeal, ProperPair
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[3,7],[2,0]]),Q)
             sage: P= ProperPair(matrix(ZZ,[[2],[2]]),(1,),I)
             sage: P.is_element(matrix(ZZ,[[8],[8]]))                                                                                                        
             [3]
-            # This means that [[8],[8]]- [[2],[2]] = 3*[[2],[2]]
+            sage: # This means that [[8],[8]]- [[2],[2]] = 3*[[2],[2]]
             sage: P.is_element(matrix(ZZ,[[7],[7]]))                                                                                                        
             []
-            # This does not have solution since [[7],[7]] cannot be obtained by integer.
+            sage: # This does not have solution since [[7],[7]] cannot be obtained by integer.
             
         """
         type_mat = type(matrix(ZZ,0))
@@ -299,7 +299,7 @@ class ProperPair:
         
         EXAMPLE::
 
-            sage: from stdpairs import AffineMonoid
+            sage: from stdpairs import AffineMonoid, MonomialIdeal, ProperPair
             sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
             sage: Q = AffineMonoid(A)
             sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
@@ -320,11 +320,19 @@ class ProperPair:
 def div_pairs(pair_a, pair_b):
     r""" 
         Given two pairs ``pair_a`` and ``pair_b`` representing :math:`(a,F)` and :math:`(b,G)` respectively,
-        this method returns a monomial :math:`c` such that :math:`a+c+\mathbb{N}F \subseteq b+\mathbb{N}G`.
+        this method returns a set of monomials :math:`c` such that :math:`a+c+\mathbb{N}F \subseteq b+\mathbb{N}G` as a matrix.
+        
+        INPUT:
+
+        - ``pair_a``,``pair_b`` -- ``ProperPair`` objects.
+
+        OUTPUT:
+
+        - A ``sage.matrix.matrix_integer_dense`` object whose columns are minimal solutions of :math:`a+c+\mathbb{N}F \subseteq b+\mathbb{N}G`.
         
         EXAMPLE::
 
-            sage: from stdpairs import AffineMonoid
+            sage: from stdpairs import AffineMonoid, MonomialIdeal, ProperPair, div_pairs
             sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
             sage: Q = AffineMonoid(A)
             sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
@@ -334,8 +342,11 @@ def div_pairs(pair_a, pair_b):
             []
             sage: TT = ProperPair(matrix(ZZ,[[1], [1], [1]]), (0,3), I)
             sage: div_pairs(P,TT)
-            [0 0 0 0 0 0]
-        """
+            [0]
+            [0]
+            [0]
+    
+    """
 
     """If self=(a,F) divides other=(b,G), then return c where a+c+NF subseteq b+NG.
 
@@ -357,7 +368,8 @@ def div_pairs(pair_a, pair_b):
     else:
         #Get an index of the whole monoid as a face
         temp_face= ((pair_a.ambient_ideal()).ambient_monoid()).index_of_face(((pair_a.ambient_ideal()).ambient_monoid()).gens())
+        numgen = len(temp_face)
         #Generate a pair (self.monomial, ambient_monoid, zero ideal)
-        return ((pair_a.ambient_ideal()).ambient_monoid())._intersection_of_pairs(pair_a.monomial(),temp_face, pair_b.monomial(),pair_b.face())
+        return matrix(ZZ,((pair_a.ambient_ideal()).ambient_monoid().gens()))*(((pair_a.ambient_ideal()).ambient_monoid())._intersection_of_pairs(pair_a.monomial(),temp_face, pair_b.monomial(),pair_b.face())[:,0:numgen]).T
 
 

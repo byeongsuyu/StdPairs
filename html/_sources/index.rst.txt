@@ -17,6 +17,7 @@ The source file can be found on the `github pages <https://github.com/byeongsuyu
 
    install
    api
+   test
    support
    
    

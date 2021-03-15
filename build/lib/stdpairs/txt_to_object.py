@@ -77,18 +77,15 @@ def txt_to_monomialideal(text_info):
     EXAMPLE::
 
         sage: from stdpairs import AffineMonoid, MonomialIdeal, txt_to_monomialideal
-        sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
-        sage: Q = AffineMonoid(A)
-        sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
-        sage: I.standard_cover()
-        Calculate the standard cover of an ideal
-        It takes a few minutes, depending on the system.
-        Cover for 1  generator was calculated.  2  generators remaining. 
-        Cover for 2  generators was calculated.  1  generators remaining. 
-        Cover for 3  generators was calculated.  0  generators remaining. 
-        {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-        [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-         ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+        sage: Q = AffineMonoid(matrix(ZZ, [[1,2],[0,2]])) 
+        sage: I = MonomialIdeal(matrix(ZZ,[[3],[2]]),Q)
+        sage: I.irreducible_decomposition()
+        [An ideal whose generating set is 
+         [[1]
+          [0]],
+         An ideal whose generating set is 
+         [[2]
+          [2]]]
         sage: str_I = I.save_txt()                                                                                                                              
         sage: J = txt_to_monomialideal(str_I)
         sage: J == I                                                                                                                                    
@@ -176,8 +173,7 @@ def _cover_of_stdpairs_to_txt(cover, ambient_monoid):
 
     EXAMPLE::
 
-        sage: from stdpairs import AffineMonoid, MonomialIdeal, cover_of_stdpairs_to_txt, 
-        ....: txt_to_cover_of_stdpairs
+        sage: from stdpairs import AffineMonoid, MonomialIdeal, cover_of_stdpairs_to_txt, txt_to_cover_of_stdpairs
         sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
         sage: Q = AffineMonoid(A)
         sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
@@ -189,16 +185,14 @@ def _cover_of_stdpairs_to_txt(cover, ambient_monoid):
         Cover for 3  generators was calculated.  0  generators remaining.
         sage: C 
         {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-        [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-         ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+        [([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
+         ([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
         sage: C[(0,3)][0].ambient_ideal()                                                 
         An ideal whose generating set is 
         [[2 2 2]
          [0 1 2]
          [2 2 2]]
         sage: str_C = cover_of_stdpairs_to_txt(C, I.ambient_monoid())   
-        sage: str_C                                                                       
-        'C\nQ\n0,1,1,0|0,0,1,1|1,1,1,1\n{"(0, 3)": ["1|1|1&(0, 3)", "0|0|0&(0, 3)", "1|0|1&(0, 3)"]}'
         sage: D = txt_to_cover_of_stdpairs(str_C)
         sage: D
         [An affine semigroup whose generating set is 

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: stdpairs
-Version: 1.0.1
+Version: 1.0.3
 Summary: A library of SageMath doing symbolic computation over a monomial ideal of an affine (non-normal) semigroup ring
 Home-page: https://github.com/byeongsuyu/StdPairs
 Author: Byeongsu Yu

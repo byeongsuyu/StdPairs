@@ -17,6 +17,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 import numpy as np
+from numpy import linalg as LA
 import json
 from pathlib import Path
 from sage.all import ZZ
@@ -51,7 +52,7 @@ class MonomialIdeal:
         sage: from stdpairs import AffineMonoid, MonomialIdeal
         sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
         sage: import numpy
-        #Using ``NumPy``
+        sage: #Using ``NumPy``
         sage: M = numpy.array([[4,6],[4,6]])
         sage: I = MonomialIdeal(M,Q)
         sage: I                                                                         
@@ -63,7 +64,7 @@ class MonomialIdeal:
 
         sage: from stdpairs import AffineMonoid, MonomialIdeal
         sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
-        #Using ``sage.matrix.matrix_integer_dense``
+        sage: #Using ``sage.matrix.matrix_integer_dense``
         sage: M = matrix(ZZ,[[4,6],[4,6]])
         sage: I = MonomialIdeal(M,Q)
         sage: I                                                                         
@@ -79,13 +80,25 @@ class MonomialIdeal:
         sage: Q = AffineMonoid(A)
         sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
         sage: I.standard_cover()
+        Calculate the standard cover of an ideal
+        It takes a few minutes, depending on the system.
+        Cover for 1  generator was calculated.  2  generators remaining. 
+        Cover for 2  generators was calculated.  1  generators remaining. 
+        Cover for 3  generators was calculated.  0  generators remaining. 
+        {(0, 3): [([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
+          ([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]]),
+          ([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]])]}
         sage: I.irreducible_decomposition()
+        [An ideal whose generating set is 
+         [[2 2 2]
+          [0 1 2]
+          [2 2 2]]]
         sage: for face, prime_id in I.associated_primes().items():
-        sage:     if I.multiplicity(face) != I.multiplicity(prime_id):
-        sage:         raise SyntaxError("[Error]: multiplicity() method does not work well. Report it to the developer.")
+        ....:     if I.multiplicity(face) != I.multiplicity(prime_id):
+        ....:         raise SyntaxError("[Error]: multiplicity() method does not work well. Report it to the developer.")
         sage: if (I.is_prime() != False) or (I.is_radical() != False) or (I.is_primary() != True):
-        sage:     raise SyntaxError("[Error]: the boolean methods does not work well. Report it to the developer.")
-        sage: 
+        ....:     raise SyntaxError("[Error]: the boolean methods does not work well. Report it to the developer.")
+        
     """
     def __init__(self, genset, ambient_monoid):
         type_mat = type(matrix(ZZ,0))
@@ -231,6 +244,7 @@ class MonomialIdeal:
         EXAMPLE::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
+            sage: Q = AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I = MonomialIdeal(matrix(ZZ,[[4,3],[4,2]]),Q) 
             sage: I.standard_cover()                                                        
             Calculate the standard cover of an ideal
@@ -243,49 +257,53 @@ class MonomialIdeal:
 
         EXAMPLE::
             
-            sage: print("test MonomialIdeal.standard_cover() . . . .", end="")
-            sage: from stdpairs import AffineMonoid, MonomialIdeal                          
-            sage: import numpy as np                                                        
-            sage: import ast                                                                
-            sage: numvar = 3                                                                
-            sage: numgen = 3                                                                
-            sage: A = np.identity(numvar,dtype="int64")                                     
-            sage: B = np.random.randint(3, size=(numvar, numgen))                           
-            sage: Q = AffineMonoid(A)                                                       
-            sage: I = MonomialIdeal(B,Q)                                                    
-            sage: temp=macaulay2.eval('R=ZZ[vars (0..'+str(numvar-1)+')]')                  
-            sage: gens_ideal='I=monomialIdeal(';                                            
-            sage: for row in I.gens().T: 
-            ....:     eq=''  
-            ....:     for idx in range(numvar):  
-            ....:         eq=eq+'R_'+str(idx)+'^'+str(row[idx])+'*'  
-            ....:     eq = eq[:-1]  
-            ....:     gens_ideal=gens_ideal + eq+','  
-            ....:                                                                           
-            sage: gens_ideal=gens_ideal[:-1] + ')'                                          
-            sage: temp=macaulay2.eval(gens_ideal)                                           
-            sage: temp=macaulay2.eval('L=standardPairs I')                                  
+            sage: print("test MonomialIdeal.standard_cover() . . . .")
+            test MonomialIdeal.standard_cover() . . . .
+            sage: from stdpairs import AffineMonoid, MonomialIdeal
+            sage: import numpy as np
+            sage: import ast
+            sage: numvar = 3
+            sage: numgen = 1
+            sage: A = np.identity(numvar,dtype="int64")
+            sage: B = np.random.randint(3, size=(numvar, numgen))
+            sage: Q = AffineMonoid(A)
+            sage: I = MonomialIdeal(B,Q)
+            sage: # Calculate it by Macaulay2
+            sage: # Set a polynomial ring first.
+            sage: temp=macaulay2.eval('R=ZZ[vars (0..'+str(numvar-1)+')]')
+            sage: gens_ideal='I=monomialIdeal(';
+            sage: for row in I.gens().T:
+            ....:     eq='' 
+            ....:     for idx in range(numvar): 
+            ....:         eq=eq+'R_'+str(idx)+'^'+str(row[idx])+'*' 
+            ....:     eq = eq[:-1] 
+            ....:     gens_ideal=gens_ideal + eq+',' 
+            sage: gens_ideal=gens_ideal[:-1] + ')'
+            sage: temp=macaulay2.eval(gens_ideal)
+            sage: temp=macaulay2.eval('L=standardPairs I')
             sage: result=list(macaulay2('T=apply(L, i -> {(exponents i_0)_0, apply(i_1, j -> index j)})')) 
-            sage: for item in result: item[1].sort();                                       
-            sage: faces = list(set([tuple(item[1]) for item in result]))                    
-            sage: faces = [ast.literal_eval(str(face)) for face in faces]                   
+            sage: for item in result: temp=item[1].sort();
+            sage: faces = list(set([tuple(item[1]) for item in result])) 
+            sage: faces = [ast.literal_eval(str(face)) for face in faces]
             sage: cover_from_mac2={}
-            sage: for face in faces:  
-            ....:     cover_from_mac2[face]=[]  
-            ....:     for item in result:  
-            ....:         if face == tuple(item[1]):  
+            sage: for face in faces: 
+            ....:     cover_from_mac2[face]=[] 
+            ....:     for item in result: 
+            ....:         if face == tuple(item[1]): 
             ....:             cover_from_mac2[face].append(ast.literal_eval(str(tuple(item[0]))))
-            # Calculate standard pairs by stdpairs package
-            sage: cover_from_sage ={}                                                       
-            sage: for face,list_of_pairs in I.standard_cover().items():  
-            ....:     cover_from_sage[face] = [tuple(pair.monomial().T.tolist()[0]) for pair in list_of_pairs] 
-            sage: faces=list(cover_from_mac2.keys())+list(cover_from_sage.keys())           
-            sage: faces=list(set([str(item) for item in faces]))                            
-            sage: faces=[ast.literal_eval(item) for item in faces]                          
+            sage: # Calculate standard pairs by stdpairs package
+            sage: cover_from_sage ={}
+            sage: for face,list_of_pairs in I.standard_cover().items(): 
+            ....:     cover_from_sage[face] = [tuple(pair.monomial().T.tolist()[0]) for pair in list_of_pairs]
+            sage: # Check equality:
+            sage: faces=list(cover_from_mac2.keys())+list(cover_from_sage.keys())
+            sage: faces=list(set([str(item) for item in faces]))
+            sage: faces=[ast.literal_eval(item) for item in faces]
             sage: for face in faces:
-            ....:     if set([str(item) for item in cover_from_sage[face]]) != set([str(item) for item in cover_from_mac2[face]]): 
-            ....:         raise SyntaxError("Standard pairs from Macaulay2 are not equal to those from stdpairs package.") 
-            sage: print(" pass")
+            ....:     if set([str(item) for item in cover_from_sage[face]]) != set([str(item) for item in cover_from_mac2[face]]):
+            ....:         raise SyntaxError("Standard pairs from Macaulay2 are not equal to those from stdpairs package.")
+            sage: print("pass")
+            pass
 
             
         """
@@ -296,7 +314,11 @@ class MonomialIdeal:
             self.__is_std_cover_calculated = True
             return self.__dict_standard_pairs
         if (self.__is_std_cover_calculated == False):
-            self.__dict_standard_pairs = _stdpairs._standard_pairs(self)
+            temp_cover = _stdpairs._standard_pairs(self)
+            self.__dict_standard_pairs={}
+            for face, list_of_pairs in temp_cover.items():
+                newlist = sorted(list_of_pairs, key=lambda x: LA.norm(x.monomial(),axis=0), reverse=False)
+                self.__dict_standard_pairs[face]=newlist
             self.__is_std_cover_calculated = True
         return self.__dict_standard_pairs
     def overlap_classes(self):
@@ -323,9 +345,9 @@ class MonomialIdeal:
             Cover for 2  generators was calculated.  1  generators remaining. 
             Cover for 3  generators was calculated.  0  generators remaining. 
             {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
-            #Notes that two overlap classes are generated from three standard pairs.
+              [([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
+               ([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+            sage: #Notes that two overlap classes are generated from three standard pairs.
             
         """
         if self.__is_overlap_calculated == True:
@@ -350,16 +372,14 @@ class MonomialIdeal:
             Cover for 1  generator was calculated.  2  generators remaining. 
             Cover for 2  generators was calculated.  1  generators remaining. 
             Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
             True
-            # After the first execution, it uses the pre-calculated result.
+            sage: # After the first execution, it uses the pre-calculated result.
             sage: I.is_irreducible()
             True 
 
         EXAMPLE(Non-irreducible case)::
 
+            sage: from stdpairs import AffineMonoid, MonomialIdeal
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[5],[4]]),Q)
             sage: I.is_irreducible()
@@ -385,33 +405,27 @@ class MonomialIdeal:
             
         EXAMPLE(Prime case)::
 
-            sage: J = MonomialIdeal(matrix(ZZ,[[1,0,1],[0,1,1],[1,1,1]]),Q)
-            sage: J.is_prime()                                                              
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
+            sage: from stdpairs import AffineMonoid, MonomialIdeal
+            sage: A = matrix(ZZ,[[1,1],[0,1]])
+            sage: Q = AffineMonoid(A)
+            sage: I = MonomialIdeal(matrix(ZZ,[[1],[0]]),Q)
+            sage: I.is_prime()                                                              
             True
-            # After the first execution, it uses the pre-calculated result.
+            sage: # After the first execution, it uses the pre-calculated result.
             sage: I.is_prime()
             True
 
         EXAMPLE(Non-prime case)::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
-            sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
+            sage: A = matrix(ZZ,[[1,1],[0,1]])
             sage: Q = AffineMonoid(A)
-            sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
+            sage: I = MonomialIdeal(matrix(ZZ,[[1,2],[0,2]]),Q)
             sage: I.is_prime()
             Calculate the standard cover of an ideal
             It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+            Cover for 1  generator was calculated.  1  generators remaining. 
+            Cover for 2  generators was calculated.  0  generators remaining. 
             False
             
         """
@@ -439,25 +453,19 @@ class MonomialIdeal:
         EXAMPLE(Primary case)::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
-            sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
+            sage: from stdpairs import AffineMonoid, MonomialIdeal
+            sage: A = matrix(ZZ,[[1,1],[0,1]])
             sage: Q = AffineMonoid(A)
-            sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
+            sage: I = MonomialIdeal(matrix(ZZ,[[7],[0]]),Q)
             sage: I.is_primary()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
             True
-            # After the first execution, it uses the pre-calculated result.
+            sage: # After the first execution, it uses the pre-calculated result.
             sage: I.is_primary()
             True 
 
         EXAMPLE(Non-primary case)::
 
+            sage: from stdpairs import AffineMonoid, MonomialIdeal
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[5],[4]]),Q)
             sage: I.is_primary()
@@ -482,29 +490,21 @@ class MonomialIdeal:
 
         EXAMPLE(Radical case)::
 
+            sage: from stdpairs import AffineMonoid, MonomialIdeal
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[3],[2]]),Q)
             sage: I.is_radical()
             True
-            # After the first execution, it uses the pre-calculated result.
+            sage: # After the first execution, it uses the pre-calculated result.
             sage: I.is_radical()
             True 
 
         EXAMPLE(Non-radical case)::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
-            sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
-            sage: Q = AffineMonoid(A)
-            sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
+            sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
+            sage: I=MonomialIdeal(matrix(ZZ,[[6,5],[2,2]]),Q)
             sage: I.is_radical()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
             False
             
         """
@@ -538,13 +538,13 @@ class MonomialIdeal:
 
         EXAMPLE::
 
+            sage: from stdpairs import AffineMonoid, MonomialIdeal
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[3,7],[2,0]]),Q)
-            sage: I=MonomialIdeal(matrix(ZZ,[[3,7],[2,0]]),Q)                             
             sage: I.is_element(matrix(ZZ,[[9],[2]]))                                      
             {0: [6 0], 1: [0 1]}
-            # In other words, (9,2)^{t} = (3,2)^{t}+6*(1,0)^{t}
-            # and (9,2)^{t}= (7,0)^{t}+1*(2,2)^{t}
+            sage: # In other words, (9,2)^{t} = (3,2)^{t}+6*(1,0)^{t}
+            sage: # and (9,2)^{t}= (7,0)^{t}+1*(2,2)^{t}
         """
         if self.is_empty():
             return matrix(ZZ,0)
@@ -569,11 +569,12 @@ class MonomialIdeal:
 
         EXAMPLE(Radical case)::
 
+            sage: from stdpairs import AffineMonoid, MonomialIdeal
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[3],[2]]),Q)
             sage: I.is_standard_monomial(matrix(ZZ,[[1],[1]]))
             True
-            #(1,1)^t is not a memeber of ideal.
+            sage: #(1,1)^t is not a memeber of ideal.
 
         """
         type_mat = type(matrix(ZZ,0))
@@ -605,21 +606,17 @@ class MonomialIdeal:
         EXAMPLE::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
-            sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
-            sage: Q = AffineMonoid(A)
-            sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
+            sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
+            sage: I=MonomialIdeal(matrix(ZZ,[[3,4],[0,2]]),Q)
             sage: I.overlap_classes()
             Calculate the standard cover of an ideal
             It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+            Cover for 1  generator was calculated.  1  generators remaining. 
+            Cover for 2  generators was calculated.  0  generators remaining. 
+            {(): [[([[2], [0]]^T,[[], []])]],
+             (1,): [[([[0], [0]]^T,[[2], [2]])], [([[1], [0]]^T,[[2], [2]])]]}
             sage: I.maximal_overlap_classes()                                             
-            {(0, 3): [[([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-               ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+            {(): [[([[2], [0]]^T,[[], []])]], (1,): [[([[1], [0]]^T,[[2], [2]])]]}
             
         """
         if self.__is_max_overlap_calculated:
@@ -652,24 +649,12 @@ class MonomialIdeal:
         EXAMPLE::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
-            sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
-            sage: Q = AffineMonoid(A)
-            sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
-            sage: I.standard_cover()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+            sage: Q = AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
+            sage: I = MonomialIdeal(matrix(ZZ,[[3],[0]]),Q)
             sage: I.associated_primes()                                                                                                                     
-            {(0,
-              3): An ideal whose generating set is 
-             [[1 1]
-              [0 1]
-              [1 1]]}
+            {(1,): An ideal whose generating set is 
+             [[1]
+              [0]]}
 
         """    
         if self.__is_ass_prime_calculated == True:
@@ -695,29 +680,18 @@ class MonomialIdeal:
         EXAMPLE::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
-            sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
-            sage: Q = AffineMonoid(A)
-            sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
+            sage: Q = AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
+            sage: I = MonomialIdeal(matrix(ZZ,[[3],[0]]),Q)
             sage: I.associated_primes()                                                                                                                     
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
-            {(0,
-              3): An ideal whose generating set is 
-             [[1 1]
-              [0 1]
-              [1 1]]}
-            # Check multiplicity using a face as an argument.
-            sage: I.multiplicity((0,3))                                                                                                                     
-            2
-            # Check multiplicity using the prime ideal as an argument.
-            sage: I.multiplicity(I.associated_primes()[(0,3)]) 
-            2
+            {(1,): An ideal whose generating set is 
+             [[1]
+              [0]]}
+            sage: # Check multiplicity using a face as an argument.
+            sage: I.multiplicity((1,))                                                                                                                     
+            3
+            sage: # Check multiplicity using the prime ideal as an argument.
+            sage: I.multiplicity(I.associated_primes()[(1,)]) 
+            3
 
         """
         if isinstance(an_ideal_or_face, MonomialIdeal):
@@ -885,25 +859,23 @@ class MonomialIdeal:
         EXAMPLE::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
+            sage: from pathlib import Path
             sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
             sage: Q = AffineMonoid(A)
             sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
-            sage: I.associated_primes()                                                                                                                     
+            sage: I.associated_primes()
             Calculate the standard cover of an ideal
             It takes a few minutes, depending on the system.
             Cover for 1  generator was calculated.  2  generators remaining. 
             Cover for 2  generators was calculated.  1  generators remaining. 
             Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
             {(0,
               3): An ideal whose generating set is 
              [[1 1]
               [0 1]
               [1 1]]}
             sage: I.save('~/test.sobj')
-            # When you want to load the saved one
+            sage: # When you want to load the saved one
             sage: I = load(str(Path.home())+'/test.sobj')
             sage: I.associated_primes()
             {(0,
@@ -911,8 +883,8 @@ class MonomialIdeal:
              [[1 1]
               [0 1]
               [1 1]]}
-            #Methods which previously executed let the object remember the calculation;
-            #it does not calculate again.
+            sage: #Methods which previously executed let the object remember the calculation;
+            sage: #it does not calculate again.
         """
         # If path_of_file starts with ~, change it as a Home directory.
         if not isinstance(path_of_file,str):
@@ -932,23 +904,14 @@ class MonomialIdeal:
         EXAMPLE::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
-            sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
+            sage: A = matrix(ZZ,[[1,2],[0,2]])
             sage: Q = AffineMonoid(A)
-            sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
-            sage: I.standard_cover()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+            sage: I = MonomialIdeal(matrix(ZZ,[[5],[4]]),Q)
             sage: I.radical()
             An ideal whose generating set is 
-            [[1 1]
-             [0 1]
-             [1 1]]
+            [[3]
+             [2]]
+
         """
         if self.__is_radical_ideal_calculated == True:
             return self.__radical_ideal
@@ -1003,20 +966,14 @@ class MonomialIdeal:
         EXAMPLE::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
-            sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
+            sage: A = matrix(ZZ,[[1,2],[0,2]])
             sage: Q = AffineMonoid(A)
-            sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
+            sage: I = MonomialIdeal(matrix(ZZ,[[5],[4]]),Q)
             sage: I.standard_cover()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-            [([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-             ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+            {(1,): [([[0], [0]]^T,[[2], [2]])],
+             (0,): [([[0], [0]]^T,[[1], [0]]), ([[2], [2]]^T,[[1], [0]])]}
             sage: I.save_txt()                                                                                                                              
-            'I\nQ\n0,1,1,0|0,0,1,1|1,1,1,1\nis_empty_ideal\n0\ngens\n2,2,2|0,1,2|2,2,2\n__is_std_cover_calculated\n1\n{"(0, 3)": ["1|1|1&(0, 3)", "1|0|1&(0, 3)", "0|0|0&(0, 3)"]}\n__is_overlap_calculated\n0\n__is_max_overlap_calculated\n0\n__is_ass_prime_calculated\n0\n__is_irr_decom_prime_calculated\n0\n'
+            'I\nQ\n1,2|0,2\nis_empty_ideal\n0\ngens\n5|4\n__is_std_cover_calculated\n1\n{"(1,)": ["0|0&(1,)"], "(0,)": ["0|0&(0,)", "2|2&(0,)"]}\n__is_overlap_calculated\n0\n__is_max_overlap_calculated\n0\n__is_ass_prime_calculated\n0\n__is_irr_decom_prime_calculated\n0\n'
         """
         text_info = "I\n"
         # Write the ambient monoid
@@ -1128,7 +1085,7 @@ class MonomialIdeal:
             sage: for permutation in G: 
             ....:     if (I== MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]])*permutation,Q)) == False: 
             ....:         raise SyntaxError("[Error]: __eq__ does not work properly.")
-            ....:                                                                           
+                                                                                       
         """
         if not isinstance(other, type(self)): return NotImplemented
         if self.__gens.shape != other.gens().shape:
@@ -1149,7 +1106,7 @@ class MonomialIdeal:
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[3],[2]]),Q)
             sage: J=MonomialIdeal(matrix(ZZ,[[4,7],[2,0]]),Q)
-            sage: I+J                                                                                                                                       
+            sage: I*J                                                                                                                                       
             An ideal whose generating set is 
             [[ 7 10]
              [ 4  2]]

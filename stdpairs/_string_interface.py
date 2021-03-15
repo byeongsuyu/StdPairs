@@ -2,8 +2,6 @@
 #### Variable Transformations
 """
     string
-        _pair_hash_wo_ideal(ProperPair (a,F)):
-            return hashstring without ideal information.
         _np2d_to_string(numpy 2D array):
             return hashstring of the numpy 2D array.
 
@@ -17,21 +15,8 @@
         _json_dump_cover(cover C):
             Change a cover of standard pairs C as its string form, and
             return the json file containing a dictionary of strings.
-
-    MonomialIdeal
-        txt_to_ideal(string):
-            Given saved ideal text, return corresponding MonomialIdeal attribute.
-    dict
-        _txt_to_cover(string):
-            Given saved cover text, return corresponding cover.
-
-    bool
-        _is_permuation_matrix(numpy.array like object x)
-            return boolean indicating whether x is permuation matrix or not.
-    list
-        _complement_of_down_set(list (of tuples of faces), ambient_monoid Q)
-            Given faces of Q, return list of faces whose down set does not
-            contain any given face.
+        _unique_np_arrays
+            Given a list of numpy 2d array with the same shape, return the unique ones
 
             
 """

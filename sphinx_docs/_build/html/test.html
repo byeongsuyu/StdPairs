@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Test StdPairs package &mdash; StdPairs 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Support" href="support.html" />
+    <link rel="prev" title="Global functions" href="globalfunctions.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> StdPairs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Module contents</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Test StdPairs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">StdPairs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Test StdPairs package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/test.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="test-stdpairs-package">
+<h1>Test StdPairs package<a class="headerlink" href="#test-stdpairs-package" title="Permalink to this headline">¶</a></h1>
+<p>To be certain on functioning of the implemented methods and attributes of the package, one can test all examples in the documens directly using the command below.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>sage -t <span class="nv">$SAGE_ROOT</span>/local/lib/python3.9/site-packages/stdpairs/affinemonoid.py
+sage -t --long <span class="nv">$SAGE_ROOT</span>/local/lib/python3.9/site-packages/stdpairs/monomialideal.py
+sage -t <span class="nv">$SAGE_ROOT</span>/local/lib/python3.9/site-packages/stdpairs/properpair.py
+sage -t <span class="nv">$SAGE_ROOT</span>/local/lib/python3.9/site-packages/stdpairs/macaulay2_interface.py
+sage -t <span class="nv">$SAGE_ROOT</span>/local/lib/python3.9/site-packages/stdpairs/txt_to_object.py
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">$SAGE_ROOT</span></code> is the folder your sage was compiled or installed. Make sure that testing <code class="docutils literal notranslate"><span class="pre">monomialideal.py</span></code> file takes 2~3 minutes, unlike others. If one wants to test for more serious examples, we provide two test examples as below.</p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://github.com/byeongsuyu/StdPairs/blob/551979519a41afeab3a12cc6723b928dacedce0f/tests/test_overall.sage">Test overall</a> executes all methods and attributes of the package and compares their return with pre-defined true computational result. It took a 15 minutes depending on your machine.</p></li>
+<li><p><a class="reference external" href="https://github.com/byeongsuyu/StdPairs/blob/551979519a41afeab3a12cc6723b928dacedce0f/tests/test_standard_cover.sage">Test indifference between Macaulay2 and StdPairs</a> executes <code class="docutils literal notranslate"><span class="pre">MonomialIdeal.standard_cover()</span></code> method over a (randomly selected) monomial ideal over a polynomial ring and compares its return with the same calculation from <a class="reference external" href="http://www2.macaulay2.com/Macaulay2/">Macaulay2</a>.</p></li>
+</ol>
+<p>To test your installed package, please download above testing files, and type</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>sage -t --long test_overall.sage
+</pre></div>
+</div>
+<p>on the folder having tests files downloaded. For example, above one gives you messages as below.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>too many failed tests, not using stored timings
+Running doctests with ID <span class="m">2021</span>-03-14-19-03-06-6813f135.
+Git branch: develop
+Using --optional<span class="o">=</span>4ti2,build,dochtml,homebrew,pip,sage,sage_spkg
+Doctesting <span class="m">1</span> file.
+This is <span class="nb">test</span> suits <span class="k">for</span> stdpairs.
+running AffineMonoid and its methods . . .  pass
+running txt_to_affinemonoid<span class="o">()</span> . . . pass
+sage -t --long --random-seed<span class="o">=</span><span class="m">0</span> test_overall.sage
+running txt_to_monomialideal<span class="o">()</span> . . . pass
+running MonomialIdeal and its methods . . .Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">2</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">3</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">2</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">3</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">4</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">3</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">3</span>  generators was calculated.  <span class="m">2</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">4</span>  generators was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">5</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+Calculate the standard cover of an ideal
+It takes a few minutes, depending on the system.
+Cover <span class="k">for</span> <span class="m">1</span>  generator was calculated.  <span class="m">2</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">2</span>  generators was calculated.  <span class="m">1</span>  generators remaining.
+Cover <span class="k">for</span> <span class="m">3</span>  generators was calculated.  <span class="m">0</span>  generators remaining.
+pass
+running prime_ideal<span class="o">()</span> . . . pass
+running ProperPair class and its methods . . . pass
+running div_pairs<span class="o">()</span> . . . pass
+running macaulay2<span class="o">()</span> . . . pass
+running from_macaulay2<span class="o">()</span> . . . pass
+running to_macaulay2<span class="o">()</span> . . . pass
+StdPair package <span class="nb">test</span> was <span class="k">done</span>! Everything works well.
+<span class="o">[</span><span class="m">0</span> tests, <span class="m">0</span>.00 s<span class="o">]</span>
+----------------------------------------------------------------------
+All tests passed!
+----------------------------------------------------------------------
+Total <span class="nb">time</span> <span class="k">for</span> all tests: <span class="m">732</span>.3 seconds
+cpu time: <span class="m">0</span>.0 seconds
+cumulative wall time: <span class="m">0</span>.0 seconds
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="support.html" class="btn btn-neutral float-right" title="Support" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="globalfunctions.html" class="btn btn-neutral float-left" title="Global functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Byeongsu Yu.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

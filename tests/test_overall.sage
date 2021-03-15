@@ -82,7 +82,7 @@ P = ProperPair(matrix(ZZ,[[1], [1], [1]]), (0,4), I)
 T = ProperPair(matrix(ZZ,[[1], [1], [1]]), (3,), I)
 if (div_pairs(P,T) != False): raise SyntaxError(print_err("div_pairs()"))
 TT = ProperPair(matrix(ZZ,[[1], [1], [1]]), (0,4), I)
-if (np.array(div_pairs(P,TT)).size != 7): raise SyntaxError(print_err("div_pairs()"))
+if (np.array(div_pairs(P,TT)).size != 3): raise SyntaxError(print_err("div_pairs()"))
 print(" pass")
 print("running macaulay2() . . .", end="")
 try: 
@@ -102,7 +102,6 @@ D=to_macaulay2(J)
 if (D['AffineSemigroupRing'] != macaulay2.eval('R')) or (D['MonomialIdeal'] != macaulay2.eval('I')) or (D['StandardCover'] != macaulay2.eval('SC')): raise SyntaxError(print_err("to_macaulay2()"))
 print(" pass")
 print("StdPair package test was done! Everything works well.")
-
 
 
 

@@ -44,9 +44,8 @@ def from_macaulay2(var_name):
 
         sage: from stdpairs import from_macaulay2
         sage: R = macaulay2.eval('ZZ[x,y,z]')
-        sage: macaulay2.eval("loadPackage Normaliz")
-        Normaliz
-        sage: macaulay2.eval('S=createMonomialSubalgebra {x^5*y, y*z^2, z^3}')
+        sage: temp=macaulay2.eval("loadPackage Normaliz")
+        sage: temp=macaulay2.eval('S=createMonomialSubalgebra {x^5*y, y*z^2, z^3}')
         sage: Q=from_macaulay2("S")
         sage: Q
         An affine semigroup whose generating set is
@@ -93,31 +92,26 @@ def to_macaulay2(monomial_ideal, ring_name="R", ideal_name="I", std_cover_name =
         sage: Q=AffineMonoid(matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])) 
         sage: I=MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q) 
         sage: S=to_macaulay2(I)
+        Calculate the standard cover of an ideal
+        It takes a few minutes, depending on the system.
+        Cover for 1  generator was calculated.  2  generators remaining. 
+        Cover for 2  generators was calculated.  1  generators remaining. 
+        Cover for 3  generators was calculated.  0  generators remaining.
         sage: S                                                                           
         {'AffineSemigroupRing': ZZ[c, a*c, a*b*c, b*c]
- 
-        monomial subalgebra of RINGR,
+        <BLANKLINE>
+        monomial subalgebra of PolyRing,
         'MonomialIdeal':   2 2   2   2   2 2 2
         {a c , a b*c , a b c }
- 
+        <BLANKLINE>
         List,
-        'StandardCover': {{a*b*c, {c, b*c}}, {a*c, {c, b*c}}, {1, {c, b*c}}}
- 
+        'StandardCover': {{a*c, {c, b*c}}, {a*b*c, {c, b*c}}, {1, {c, b*c}}}
+        <BLANKLINE>
         List}
-        # To access values in dictionary via Macaulay2,
-        sage: macaulay2.eval("R")                                                       
-        ZZ[c, a*c, a*b*c, b*c]
-
-        monomial subalgebra of PolyRing
-        sage: macaulay2.eval("I")                                                       
-          2 2   2   2   2 2 2
-        {a c , a b*c , a b c }
-
-        List
-        sage: macaulay2.eval("SC")                                                      
-        {{a*b*c, {c, b*c}}, {a*c, {c, b*c}}, {1, {c, b*c}}}
-
-        List
+        sage: # To access values in dictionary via Macaulay2,
+        sage: mac_ring=macaulay2.eval("R")                                                       
+        sage: mac_ideal=macaulay2.eval("I")                                                       
+        sage: mac_sc=macaulay2.eval("SC")                                                      
 
     """
     
