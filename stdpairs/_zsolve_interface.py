@@ -14,13 +14,13 @@ def _zsolve_exact_solver(matrix_b, col_vector, all_solution=False):
     if not isinstance(matrix_b,np.ndarray):
         raise ValueError("[Error]: First instance,", matrix_b ," is not numpy array.")
     elif len(matrix_b.shape) !=2:
-    	raise ValueError("[Error]: First instance,", matrix_b ," is not 2D numpy array.")
+        raise ValueError("[Error]: First instance,", matrix_b ," is not 2D numpy array.")
     if not isinstance(col_vector,np.ndarray):
         raise ValueError("[Error]: Second instance,", col_vector ," is not numpy array.")
     elif len(col_vector.shape) !=2:
-    	raise ValueError("[Error]: First instance,", matrix_b ," is not 2D numpy array.")
+        raise ValueError("[Error]: First instance,", matrix_b ," is not 2D numpy array.")
     elif col_vector.shape[1] != 1:
-    	raise ValueError("[Error]: First instance,", matrix_b ," is not a column vector, i.e., its shape[1] != 1")
+        raise ValueError("[Error]: First instance,", matrix_b ," is not a column vector, i.e., its shape[1] != 1")
     # Make a matrix submatrix_b=[A;A]
     submatrix_b=np.concatenate((matrix_b,matrix_b))
     # Transpose a 2D column col_vector into 1D col_vector.

@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="stdpairs", # Replace with your own username
-    version="1.0.4",
+    version="1.0.5",
     author="Byeongsu Yu",
     author_email="byeongsu.yu@gmail.com",
     description="A library of SageMath doing symbolic computation over a monomial ideal of an affine (non-normal) semigroup ring",
@@ -21,5 +21,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     packages=setuptools.find_packages(),
-    python_requires=">=3.9",
+    python_requires=">=3.7",
 )

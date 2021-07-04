@@ -4,11 +4,7 @@ Call package:
 
 ::
 
-    sage: from stdpairs import *
-    #'AffineMonoid', 'MonomialIdeal', 'ProperPair' classes and
-    #'prime_ideal','div_pairs','pair_difference','from_macaulay2'
-    #'to_macaulay2','txt_to_affinemonoid','txt_to_monomialideal'
-    # global functions are imported.
+    sage: from stdpairs import *    
 
 AUTHORS:
 

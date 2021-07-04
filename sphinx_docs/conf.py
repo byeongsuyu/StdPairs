@@ -13,7 +13,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('/Applications/sage-9.2/local/lib/python3.9/site-packages'))
+sys.path.insert(0, os.path.abspath('/Applications/sage-9.3/local/lib/python3.9/site-packages'))
 
 
 # -- Project information -----------------------------------------------------

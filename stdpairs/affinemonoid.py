@@ -399,10 +399,7 @@ class AffineMonoid():
             sage: from pathlib import Path
             sage: A = matrix(ZZ, [[1,2,7],[0,2,4]])                                         
             sage: Q = AffineMonoid(A)                                                       
-            sage: Q.save('~/test.sobj')
-            sage: # If you want to load the saved one
-            sage: R = load(str(Path.home())+'/test.sobj')
-            sage: R == Q
+            sage: Q == loads(dumps(Q))
             True
         """
         # If path_of_file starts with ~, change it as a Home directory.

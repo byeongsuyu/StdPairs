@@ -32,7 +32,7 @@ See Section 2 of [Yu2020]_ or `Module Contents <./api.html>`_.
 Copyright & License
 -------------------------------
 
-StdPairs is Copyright (c) 2020-2020 Byeongsu Yu. All Rights Reserved.
+StdPairs is Copyright (c) 2020 Byeongsu Yu. All Rights Reserved.
 
 Permission to modify and redistribute is granted under the terms of the GPL 3.0 license. See the `LICENSE.txt <https://github.com/byeongsuyu/StdPairs/blob/main/LICENSE>`_ file for the full license.
 

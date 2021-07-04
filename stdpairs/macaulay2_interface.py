@@ -46,7 +46,7 @@ def from_macaulay2(var_name):
         sage: R = macaulay2.eval('ZZ[x,y,z]')
         sage: temp=macaulay2.eval("loadPackage Normaliz")
         sage: temp=macaulay2.eval('S=createMonomialSubalgebra {x^5*y, y*z^2, z^3}')
-        sage: Q=from_macaulay2("S")
+        sage: Q = from_macaulay2('S')
         sage: Q
         An affine semigroup whose generating set is
         [[5 0 0]
@@ -54,7 +54,7 @@ def from_macaulay2(var_name):
          [0 2 3]]
 
     """
-    test = macaulay2.eval("L = gens S")
+    test = macaulay2.eval("L = gens "+var_name)
     numgens = eval(macaulay2.eval("#L"))
     gens=[]
     for idx in range(numgens):
@@ -92,11 +92,6 @@ def to_macaulay2(monomial_ideal, ring_name="R", ideal_name="I", std_cover_name =
         sage: Q=AffineMonoid(matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])) 
         sage: I=MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q) 
         sage: S=to_macaulay2(I)
-        Calculate the standard cover of an ideal
-        It takes a few minutes, depending on the system.
-        Cover for 1  generator was calculated.  2  generators remaining. 
-        Cover for 2  generators was calculated.  1  generators remaining. 
-        Cover for 3  generators was calculated.  0  generators remaining.
         sage: S                                                                           
         {'AffineSemigroupRing': ZZ[c, a*c, a*b*c, b*c]
         <BLANKLINE>
@@ -105,7 +100,7 @@ def to_macaulay2(monomial_ideal, ring_name="R", ideal_name="I", std_cover_name =
         {a c , a b*c , a b c }
         <BLANKLINE>
         List,
-        'StandardCover': {{a*c, {c, b*c}}, {a*b*c, {c, b*c}}, {1, {c, b*c}}}
+        'StandardCover': {{1, {c, b*c}}, {a*c, {c, b*c}}, {a*b*c, {c, b*c}}}
         <BLANKLINE>
         List}
         sage: # To access values in dictionary via Macaulay2,
@@ -158,7 +153,7 @@ def to_macaulay2(monomial_ideal, ring_name="R", ideal_name="I", std_cover_name =
     
     
     total_list =std_cover_name+'={'
-    for key, val in cover.items():
+    for key, val in sorted(cover.items(), key=lambda e: e[0][0]):
         faces = [list_of_gens[idx] for idx in key]
         string_faces = '{'+ ','.join(faces) +'}'
         for pair in val:

@@ -211,11 +211,14 @@ def pair_difference(pair_a, pair_b):
         sage: I = MonomialIdeal(matrix(ZZ,0),Q)
         sage: P= ProperPair(matrix(ZZ,[[0],[0]]), (0,1,2), I ) 
         sage: T= ProperPair(matrix(ZZ,[[0],[2]]), (0,1,2), I ) 
-        sage: print(pair_difference(C,D))
-        {(0,): [([[0], [1]]^T,[[2], [0]]),
-          ([[1], [1]]^T,[[2], [0]]),
-          ([[1], [2]]^T,[[2], [0]]),
-          ([[0], [0]]^T,[[2], [0]])]}
+        sage: diff_PT = pair_difference(P,T)
+        sage: diff_PT.keys()
+        dict_keys([(0,)])
+        sage: sorted(diff_PT[(0,)],key=str)
+        [([[0], [0]]^T,[[2], [0]]),
+         ([[0], [1]]^T,[[2], [0]]),
+         ([[1], [1]]^T,[[2], [0]]),
+         ([[1], [2]]^T,[[2], [0]])]
     """
     
     if (not isinstance(pair_a,properpair.ProperPair)) or (not isinstance(pair_b,properpair.ProperPair)):
@@ -600,10 +603,10 @@ def _max_standard_pairs(cover, ambient_ideal):
 #### Theorem 4.5
 """
     cover
-        _standard_pairs(MonomialIdeal I):
-            return standard pairs of I as a cover.
+        _standard_pairs(MonomialIdeal I, verbose = True):
+            return standard pairs of I as a cover. If verbose != True, then show its progress on how much calculation was completed.
 """
-def _standard_pairs(an_ideal):
+def _standard_pairs(an_ideal,verbose=True):
     """Return the standard cover of the given ideal.
     This is an implementation of Theorem 4.5 in https://arxiv.org/abs/2005.10968
         Argument:
@@ -660,11 +663,13 @@ def _standard_pairs(an_ideal):
     if an_ideal.is_principal():
         return _cover_to_std_pairs(cover, an_ideal)
     else:
-        print("Calculate the standard cover of an ideal")
-        print("It takes a few minutes, depending on the system.")
+        if (verbose != True):
+            print("Calculate the standard cover of an ideal")
+            print("It takes a few minutes, depending on the system.")
         count_column=1
         number_of_columns = (an_ideal.gens()).shape[1]
-        print("Cover for", str(count_column) ," generator was calculated. ", str(number_of_columns-1)," generators remaining. ")
+        if (verbose != True):
+            print("Cover for", str(count_column) ," generator was calculated. ", str(number_of_columns-1)," generators remaining. ")
         for idx in range((an_ideal.gens()).shape[1]-1): # For loop by # of columns
             # Since we already use 0th column, idx will be used from 1 to (n-1), i.e., idx+1
             new_pair = properpair.ProperPair((an_ideal.gens())[:,[idx+1]], (an_ideal.ambient_monoid()).index_of_face((an_ideal.ambient_monoid()).gens()), zero_ideal)
@@ -683,7 +688,8 @@ def _standard_pairs(an_ideal):
             cover = _cover_to_std_pairs(new_cover, temp_ideal)
             count_column = count_column+1
             number_of_columns = number_of_columns-1
-            print("Cover for", str(count_column) ," generators was calculated. ", str(number_of_columns-1)," generators remaining. ")
+            if (verbose != True):
+                print("Cover for", str(count_column) ," generators was calculated. ", str(number_of_columns-1)," generators remaining. ")
         return cover
 
 #### Theorem 4.8

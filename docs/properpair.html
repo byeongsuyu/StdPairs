@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,10 +31,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -168,8 +171,8 @@
   <div class="section" id="properpair-class">
 <h1>ProperPair Class<a class="headerlink" href="#properpair-class" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="stdpairs.ProperPair">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">stdpairs.</span></code><code class="sig-name descname"><span class="pre">ProperPair</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monomial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ambient_ideal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stdpairs.ProperPair">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stdpairs.</span></span><span class="sig-name descname"><span class="pre">ProperPair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monomial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ambient_ideal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class representing a proper pair with respect to given monomial ideal <span class="math notranslate nohighlight">\(I\)</span>, which is a pair <span class="math notranslate nohighlight">\((a,F)\)</span> where <span class="math notranslate nohighlight">\(a\)</span> is a monomial
 in the ambient affine monoid, and <span class="math notranslate nohighlight">\(F\)</span> denotes a face such that <span class="math notranslate nohighlight">\(a+\mathbb{N}F \cap I = \emptyset\)</span>.
@@ -229,8 +232,8 @@ Or, abusively, this class also generated without checking the condition <span cl
 </pre></div>
 </div>
 <dl class="py method">
-<dt id="stdpairs.ProperPair.ambient_ideal">
-<code class="sig-name descname"><span class="pre">ambient_ideal</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.ambient_ideal" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stdpairs.ProperPair.ambient_ideal">
+<span class="sig-name descname"><span class="pre">ambient_ideal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.ambient_ideal" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns an ideal which decides whether <code class="docutils literal notranslate"><span class="pre">self</span></code> is proper (i.e., a translation of submonoid does not intersect with the ideal) or not. This was given when <code class="docutils literal notranslate"><span class="pre">self</span></code> was created.</p>
 <p>OUTPUT:</p>
 <ul class="simple">
@@ -250,8 +253,8 @@ Or, abusively, this class also generated without checking the condition <span cl
 </dd></dl>
 
 <dl class="py method">
-<dt id="stdpairs.ProperPair.face">
-<code class="sig-name descname"><span class="pre">face</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.face" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stdpairs.ProperPair.face">
+<span class="sig-name descname"><span class="pre">face</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.face" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the face of <code class="docutils literal notranslate"><span class="pre">self</span></code> as a <code class="docutils literal notranslate"><span class="pre">tuple</span></code> object.</p>
 <p>OUTPUT:</p>
 <ul class="simple">
@@ -272,8 +275,8 @@ Or, abusively, this class also generated without checking the condition <span cl
 </dd></dl>
 
 <dl class="py method">
-<dt id="stdpairs.ProperPair.is_element">
-<code class="sig-name descname"><span class="pre">is_element</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_monomial</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.is_element" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stdpairs.ProperPair.is_element">
+<span class="sig-name descname"><span class="pre">is_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_monomial</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.is_element" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given <code class="docutils literal notranslate"><span class="pre">a_monomial</span></code> monomial, say <span class="math notranslate nohighlight">\(b\)</span>, in the ambient monoid, find a matrix whose row <span class="math notranslate nohighlight">\(u\)</span> is a solution of
 <span class="math notranslate nohighlight">\(F*u =b-a\)</span> where <span class="math notranslate nohighlight">\((a,F)\)</span> is the give proper pair <code class="docutils literal notranslate"><span class="pre">self</span></code>. In other words, if <code class="docutils literal notranslate"><span class="pre">a_monomial</span></code> in <span class="math notranslate nohighlight">\(a+\mathbb{N}F\)</span>, return a matrix
 whose row <span class="math notranslate nohighlight">\(u\)</span> satisfies <span class="math notranslate nohighlight">\(a+F*u=b\)</span>. Otherwise, return an empty matrix.</p>
@@ -301,8 +304,8 @@ whose row <span class="math notranslate nohighlight">\(u\)</span> satisfies <spa
 </dd></dl>
 
 <dl class="py method">
-<dt id="stdpairs.ProperPair.is_maximal">
-<code class="sig-name descname"><span class="pre">is_maximal</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.is_maximal" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stdpairs.ProperPair.is_maximal">
+<span class="sig-name descname"><span class="pre">is_maximal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.is_maximal" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if and only if a pair is maximal with respect to divisibility. A proper pair <span class="math notranslate nohighlight">\((a,F)\)</span> is maximal with respect to divisibility
 if for any proper pair <span class="math notranslate nohighlight">\((b,G)\)</span> there is no such element <span class="math notranslate nohighlight">\(c\)</span> in the ambient affine monoid such that <span class="math notranslate nohighlight">\(a+c+\mathbb{N}F \subseteq b+\mathbb{N}G\)</span>.
 Notes that this function is not properly working if you generated the given pair with properness=`False` argument.</p>
@@ -326,8 +329,8 @@ Notes that this function is not properly working if you generated the given pair
 </dd></dl>
 
 <dl class="py method">
-<dt id="stdpairs.ProperPair.monomial">
-<code class="sig-name descname"><span class="pre">monomial</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.monomial" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stdpairs.ProperPair.monomial">
+<span class="sig-name descname"><span class="pre">monomial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stdpairs.ProperPair.monomial" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the monomial of <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
 <p>OUTPUT:</p>
 <ul class="simple">

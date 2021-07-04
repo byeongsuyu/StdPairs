@@ -79,15 +79,12 @@ class MonomialIdeal:
         sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
         sage: Q = AffineMonoid(A)
         sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
-        sage: I.standard_cover()
-        Calculate the standard cover of an ideal
-        It takes a few minutes, depending on the system.
-        Cover for 1  generator was calculated.  2  generators remaining. 
-        Cover for 2  generators was calculated.  1  generators remaining. 
-        Cover for 3  generators was calculated.  0  generators remaining. 
-        {(0, 3): [([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-          ([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]]),
-          ([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]])]}
+        sage: I.standard_cover().keys()
+        dict_keys([(0, 3)])
+        sage: sorted(I.standard_cover()[(0,3)],key=str)
+        [([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]]),
+         ([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
+         ([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]])]
         sage: I.irreducible_decomposition()
         [An ideal whose generating set is 
          [[2 2 2]
@@ -157,7 +154,7 @@ class MonomialIdeal:
     
         OUTPUT:
 
-        - ``ambient_monoid`` -- An ``AffineMonoid`` object.
+        - An ``AffineMonoid`` object.
 
         EXAMPLE::
 
@@ -177,7 +174,7 @@ class MonomialIdeal:
     
         OUTPUT:
 
-        - ``gens`` -- A ``NumPy.ndarray`` object with 2-dimensional shape and integer elements
+        - A ``NumPy.ndarray`` object with 2-dimensional shape and integer elements
 
         EXAMPLE::
 
@@ -219,15 +216,17 @@ class MonomialIdeal:
             True
         """
         return self.__is_principal_bool
-    def standard_cover(self):
+    def standard_cover(self, verbose=True):
         r"""
         returns a dictionary whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid()`` and 
         whose values are ``list`` objects containing standard pairs of ``self`` sharing the same faces. See [MY2020]_ for the mathematical definition of standard pair. Depending on machines and the number of generators of ideals or affine monoid, this method takes a few minutes to a few hours.
-        Notes that it does not show the status if the given monomial ideal is principal.
+        Notes that it does not show the status if the given monomial ideal is principal. 
+
+        If ``verbose`` is ``False``, then the function let user knows its progress on computation by showing how many generators are computed.
 
         OUTPUT:
 
-        - ``cover`` --  A ``dictionary`` object whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid`` and whose values are ``list`` objects consisting of ``ProperPair`` objects sharing the same face. 
+        - A ``dictionary`` object whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid`` and whose values are ``list`` objects consisting of ``ProperPair`` objects sharing the same face. 
         
         Below is an example for finding standard cover of a principal monomial ideal.
 
@@ -239,19 +238,23 @@ class MonomialIdeal:
             sage: I.standard_cover()
             {(0,): [([[0], [0]]^T,[[1], [0]]), ([[2], [2]]^T,[[1], [0]])]}
         
-        Below is an example for finding standard cover of a non-principal monomial ideal.
+        Below is an example for finding standard cover of a non-principal monomial ideal when ``verbose=False``. 
 
         EXAMPLE::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
             sage: Q = AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I = MonomialIdeal(matrix(ZZ,[[4,3],[4,2]]),Q) 
-            sage: I.standard_cover()                                                        
+            sage: I.standard_cover(False)[(0,)]                                                        
             Calculate the standard cover of an ideal
             It takes a few minutes, depending on the system.
             Cover for 1  generator was calculated.  1  generators remaining. 
             Cover for 2  generators was calculated.  0  generators remaining. 
-            {(0,): [([[0], [0]]^T,[[1], [0]])], (): [([[2], [2]]^T,[[], []])]}
+            [([[0], [0]]^T,[[1], [0]])]
+            sage: I.standard_cover()[()]
+            [([[2], [2]]^T,[[], []])]
+            sage: sorted(I.standard_cover().keys(),key=str)
+            [(), (0,)]
 
         Below is an example for comparing `standardPairs <https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.15/share/doc/Macaulay2/Macaulay2Doc/html/_standard__Pairs.html>`_ function in `Macaulay2 <http://www.math.uiuc.edu/Macaulay2/>`_ and that of ``self.standard_cover()``
 
@@ -314,10 +317,10 @@ class MonomialIdeal:
             self.__is_std_cover_calculated = True
             return self.__dict_standard_pairs
         if (self.__is_std_cover_calculated == False):
-            temp_cover = _stdpairs._standard_pairs(self)
+            temp_cover = _stdpairs._standard_pairs(self, verbose)
             self.__dict_standard_pairs={}
             for face, list_of_pairs in temp_cover.items():
-                newlist = sorted(list_of_pairs, key=lambda x: LA.norm(x.monomial(),axis=0), reverse=False)
+                newlist = sorted(list_of_pairs, key=str, reverse=False)
                 self.__dict_standard_pairs[face]=newlist
             self.__is_std_cover_calculated = True
         return self.__dict_standard_pairs
@@ -330,7 +333,7 @@ class MonomialIdeal:
 
         OUTPUT:
 
-        - ``cover`` -- A ``dictionary`` object whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid`` and whose values are ``list`` objects consisting of ``list`` objects representing an overlap class. This list consists of ``ProperPair`` objects in the same overlap classes.
+        - A ``dictionary`` object whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid`` and whose values are ``list`` objects consisting of ``list`` objects representing an overlap class. This list consists of ``ProperPair`` objects in the same overlap classes.
 
         EXAMPLE::
 
@@ -338,15 +341,15 @@ class MonomialIdeal:
             sage: A = matrix(ZZ,[[0,1,1,0],[0,0,1,1],[1,1,1,1]])
             sage: Q = AffineMonoid(A)
             sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
-            sage: I.overlap_classes()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
-            {(0, 3): [[([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])],
-              [([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
-               ([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]])]]}
+            sage: I.overlap_classes().keys()
+            dict_keys([(0, 3)])
+            sage: len(I.overlap_classes()[(0,3)])
+            2
+            sage: sorted(I.overlap_classes()[(0,3)][0],key=str)
+            [([[0], [0], [0]]^T,[[0, 0], [0, 1], [1, 1]])]
+            sage: sorted(I.overlap_classes()[(0,3)][1],key=str)
+            [([[1], [0], [1]]^T,[[0, 0], [0, 1], [1, 1]]),
+             ([[1], [1], [1]]^T,[[0, 0], [0, 1], [1, 1]])]
             sage: #Notes that two overlap classes are generated from three standard pairs.
             
         """
@@ -367,11 +370,6 @@ class MonomialIdeal:
             sage: Q = AffineMonoid(A)
             sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
             sage: I.is_irreducible()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
             True
             sage: # After the first execution, it uses the pre-calculated result.
             sage: I.is_irreducible()
@@ -422,10 +420,6 @@ class MonomialIdeal:
             sage: Q = AffineMonoid(A)
             sage: I = MonomialIdeal(matrix(ZZ,[[1,2],[0,2]]),Q)
             sage: I.is_prime()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  1  generators remaining. 
-            Cover for 2  generators was calculated.  0  generators remaining. 
             False
             
         """
@@ -601,7 +595,7 @@ class MonomialIdeal:
 
         OUTPUT:
 
-        - ``cover`` -- A ``dictionary`` object whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid`` and whose values are ``list`` objects consisting of ``list`` objects representing an overlap class. This list consists of ``ProperPair`` objects in the same maximal overlap classes.
+        - A ``dictionary`` object whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid`` and whose values are ``list`` objects consisting of ``list`` objects representing an overlap class. This list consists of ``ProperPair`` objects in the same maximal overlap classes.
 
         EXAMPLE::
 
@@ -609,10 +603,6 @@ class MonomialIdeal:
             sage: Q=AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I=MonomialIdeal(matrix(ZZ,[[3,4],[0,2]]),Q)
             sage: I.overlap_classes()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  1  generators remaining. 
-            Cover for 2  generators was calculated.  0  generators remaining. 
             {(): [[([[2], [0]]^T,[[], []])]],
              (1,): [[([[0], [0]]^T,[[2], [2]])], [([[1], [0]]^T,[[2], [2]])]]}
             sage: I.maximal_overlap_classes()                                             
@@ -644,7 +634,7 @@ class MonomialIdeal:
 
         OUTPUT:
 
-        - ``cover`` -- A ``dictionary`` object whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid`` and whose values are ``MonomialIdeal`` objects representing prime monomial ideals corresponding to the faces in their keys.
+        - A ``dictionary`` object whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid`` and whose values are ``MonomialIdeal`` objects representing prime monomial ideals corresponding to the faces in their keys.
 
         EXAMPLE::
 
@@ -767,7 +757,7 @@ class MonomialIdeal:
 
         OUTPUT:
 
-        - ``irreducible_ideals`` -- A ``list`` object consisting of ``MonomialIdeal`` objects which are irreducible and their intersection is the same as ``self``.
+        - A ``list`` object consisting of ``MonomialIdeal`` objects which are irreducible and their intersection is the same as ``self``.
 
         EXAMPLE::
 
@@ -864,27 +854,19 @@ class MonomialIdeal:
             sage: Q = AffineMonoid(A)
             sage: I = MonomialIdeal(matrix(ZZ,[[2,2,2],[0,1,2],[2,2,2]]),Q)
             sage: I.associated_primes()
-            Calculate the standard cover of an ideal
-            It takes a few minutes, depending on the system.
-            Cover for 1  generator was calculated.  2  generators remaining. 
-            Cover for 2  generators was calculated.  1  generators remaining. 
-            Cover for 3  generators was calculated.  0  generators remaining. 
             {(0,
               3): An ideal whose generating set is 
              [[1 1]
               [0 1]
               [1 1]]}
-            sage: I.save('~/test.sobj')
-            sage: # When you want to load the saved one
-            sage: I = load(str(Path.home())+'/test.sobj')
+            sage: I = loads(dumps(I))
             sage: I.associated_primes()
             {(0,
               3): An ideal whose generating set is 
              [[1 1]
               [0 1]
               [1 1]]}
-            sage: #Methods which previously executed let the object remember the calculation;
-            sage: #it does not calculate again.
+            sage: #The object remember pre-calculated results so that it does not calculate again.
         """
         # If path_of_file starts with ~, change it as a Home directory.
         if not isinstance(path_of_file,str):
@@ -899,7 +881,7 @@ class MonomialIdeal:
 
         OUTPUT:
 
-        - ``radical_ideal`` -- A ``MonomialIdeal`` object which is radical of the given ideal ``self``.
+        - A ``MonomialIdeal`` object which is radical of the given ideal ``self``.
 
         EXAMPLE::
 
@@ -969,9 +951,12 @@ class MonomialIdeal:
             sage: A = matrix(ZZ,[[1,2],[0,2]])
             sage: Q = AffineMonoid(A)
             sage: I = MonomialIdeal(matrix(ZZ,[[5],[4]]),Q)
-            sage: I.standard_cover()
-            {(1,): [([[0], [0]]^T,[[2], [2]])],
-             (0,): [([[0], [0]]^T,[[1], [0]]), ([[2], [2]]^T,[[1], [0]])]}
+            sage: I.standard_cover()[(1,)]
+            [([[0], [0]]^T,[[2], [2]])]
+            sage: I.standard_cover()[(0,)]
+            [([[0], [0]]^T,[[1], [0]]), ([[2], [2]]^T,[[1], [0]])]
+            sage: sorted(I.standard_cover().keys(),key=str)
+            [(0,), (1,)]
             sage: I.save_txt()                                                                                                                              
             'I\nQ\n1,2|0,2\nis_empty_ideal\n0\ngens\n5|4\n__is_std_cover_calculated\n1\n{"(1,)": ["0|0&(1,)"], "(0,)": ["0|0&(0,)", "2|2&(0,)"]}\n__is_overlap_calculated\n0\n__is_max_overlap_calculated\n0\n__is_ass_prime_calculated\n0\n__is_irr_decom_prime_calculated\n0\n'
         """
