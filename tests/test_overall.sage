@@ -93,7 +93,7 @@ except:
 print(" pass")
 print("running from_macaulay2() . . .", end ="")
 R = macaulay2.eval('ZZ[x,y,z]')
-test = macaulay2.eval("loadPackage Normaliz")
+test = macaulay2.needsPackage('"Normaliz"')
 test = macaulay2.eval('S=createMonomialSubalgebra {x^5*y, y*z^2, z^3}')
 if from_macaulay2("S").save_txt() != 'Q\n5,0,0|1,1,0|0,2,3\n': raise SyntaxError(print_err("from_macaulay2()"))
 print(" pass")

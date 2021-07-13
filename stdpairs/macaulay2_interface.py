@@ -44,7 +44,7 @@ def from_macaulay2(var_name):
 
         sage: from stdpairs import from_macaulay2
         sage: R = macaulay2.eval('ZZ[x,y,z]')
-        sage: temp=macaulay2.eval("loadPackage Normaliz")
+        sage: temp=macaulay2.needsPackage('"Normaliz"')
         sage: temp=macaulay2.eval('S=createMonomialSubalgebra {x^5*y, y*z^2, z^3}')
         sage: Q = from_macaulay2('S')
         sage: Q
@@ -120,7 +120,7 @@ def to_macaulay2(monomial_ideal, ring_name="R", ideal_name="I", std_cover_name =
     gens_poly_ring='PolyRing=ZZ[vars (0..'+str(numvar-1)+')]'
     temp = macaulay2.eval(gens_poly_ring)
     #Load normaliz in Macaulay2
-    temp = macaulay2.eval('loadPackage Normaliz')
+    temp = macaulay2.needsPackage('"Normaliz"')
     #Generate monomial subalgebra in Macaulay2.
     mon_sub_alg = ring_name+'=createMonomialSubalgebra {'
     list_of_gens =[]
