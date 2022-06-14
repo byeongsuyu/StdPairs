@@ -216,13 +216,13 @@ class MonomialIdeal:
             True
         """
         return self.__is_principal_bool
-    def standard_cover(self, verbose=True):
+    def standard_cover(self, verbose=False):
         r"""
         returns a dictionary whose keys are ``tuple`` objects representing faces of ``self.ambient_monoid()`` and 
         whose values are ``list`` objects containing standard pairs of ``self`` sharing the same faces. See [MY2020]_ for the mathematical definition of standard pair. Depending on machines and the number of generators of ideals or affine monoid, this method takes a few minutes to a few hours.
         Notes that it does not show the status if the given monomial ideal is principal. 
 
-        If ``verbose`` is ``False``, then the function let user knows its progress on computation by showing how many generators are computed.
+        If ``verbose`` is ``True``, then the function let user knows its progress on computation by showing how many generators are computed.
 
         OUTPUT:
 
@@ -238,14 +238,14 @@ class MonomialIdeal:
             sage: I.standard_cover()
             {(0,): [([[0], [0]]^T,[[1], [0]]), ([[2], [2]]^T,[[1], [0]])]}
         
-        Below is an example for finding standard cover of a non-principal monomial ideal when ``verbose=False``. 
+        Below is an example for finding standard cover of a non-principal monomial ideal when ``verbose=True``. 
 
         EXAMPLE::
 
             sage: from stdpairs import AffineMonoid, MonomialIdeal
             sage: Q = AffineMonoid(matrix(ZZ,[[1,2],[0,2]]))
             sage: I = MonomialIdeal(matrix(ZZ,[[4,3],[4,2]]),Q) 
-            sage: I.standard_cover(False)[(0,)]                                                        
+            sage: I.standard_cover(True)[(0,)]                                                        
             Calculate the standard cover of an ideal
             It takes a few minutes, depending on the system.
             Cover for 1  generator was calculated.  1  generators remaining. 
@@ -317,7 +317,7 @@ class MonomialIdeal:
             self.__is_std_cover_calculated = True
             return self.__dict_standard_pairs
         if (self.__is_std_cover_calculated == False):
-            temp_cover = _stdpairs._standard_pairs(self, verbose)
+            temp_cover = _stdpairs._standard_pairs(self, not verbose)
             self.__dict_standard_pairs={}
             for face, list_of_pairs in temp_cover.items():
                 newlist = sorted(list_of_pairs, key=str, reverse=False)

@@ -812,7 +812,7 @@ def _initiate_stdcover_to_ideal(cover,ambient_monoid):
         # Then check whether it is in other standard covers.
         for monomial in candid_of_gens_from_zero_face_pairs:
             is_monomial_in_cover = False
-            for face,list_of_pairs in cover:
+            for face,list_of_pairs in cover.items():
                 for pair in list_of_pairs:
                     if np.array(pair.is_element(monomial)).size>0:
                         is_monomial_in_cover = True

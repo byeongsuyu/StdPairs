@@ -1,13 +1,11 @@
 Metadata-Version: 2.1
 Name: stdpairs
-Version: 1.0.6
+Version: 1.0.7
 Summary: A library of SageMath doing symbolic computation over a monomial ideal of an affine (non-normal) semigroup ring
 Home-page: https://github.com/byeongsuyu/StdPairs
 Author: Byeongsu Yu
 Author-email: byeongsu.yu@gmail.com
-License: UNKNOWN
 Project-URL: Bug Tracker, https://github.com/byeongsuyu/StdPairs/issues
-Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
 Classifier: Operating System :: OS Independent
@@ -43,5 +41,3 @@ Copyright & License
 StdPairs is Copyright (c) 2020-2020 Byeongsu Yu. All Rights Reserved.
 
 Permission to modify and redistribute is granted under the terms of the GPL 3.0 license. See the [LICENSE.txt](https://github.com/byeongsuyu/StdPairs/blob/main/LICENSE) file for the full license.
-
-

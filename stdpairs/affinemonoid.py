@@ -566,6 +566,11 @@ class AffineMonoid():
             raise ValueError("[Error]:At least one of faces is not in the face of ambient monoid")
         #Generate an affine monoid with pair_a's face with - pair_b's face.
         temp_gens=np.concatenate((self.face(face_a),-self.face(face_b)), axis=1)
+        if (temp_gens.size ==0):
+            if (monomial_b - monomial_a).any() == True:
+                return matrix(ZZ,0)
+            else:
+                return matrix(ZZ,monomial_a*0)
         solution_vectors = AffineMonoid(temp_gens).is_element(monomial_b - monomial_a)
         #Return the minimal solutions
         return solution_vectors
