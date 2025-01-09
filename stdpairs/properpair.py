@@ -18,8 +18,8 @@ AUTHORS:
 #*****************************************************************************
 import numpy as np
 import warnings
-from sage.all import ZZ
-from sage.all import matrix
+from sage.rings.integer_ring import Z as ZZ
+from sage.matrix.constructor import Matrix as matrix
 
 from . import monomialideal
 from . import _zsolve_interface

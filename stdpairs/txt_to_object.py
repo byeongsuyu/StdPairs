@@ -21,8 +21,8 @@ AUTHORS:
 import numpy as np
 import json
 import ast
-from sage.all import matrix
-from sage.all import ZZ
+from sage.matrix.constructor import Matrix as matrix
+from sage.rings.integer_ring import Z as ZZ
 
 from . import affinemonoid
 from . import monomialideal

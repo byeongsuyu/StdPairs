@@ -14,15 +14,15 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; version 3 of
-#  the License. 
+#  the License.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
 import numpy as np
 import warnings
 from pathlib import Path
-from sage.all import ZZ
-from sage.all import matrix
+from sage.rings.integer_ring import Z as ZZ
+from sage.matrix.constructor import Matrix as matrix
 from sage.misc.persist import save as sobj_save
 import sage.geometry.polyhedron.constructor as const
 

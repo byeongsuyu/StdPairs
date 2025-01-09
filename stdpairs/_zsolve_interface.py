@@ -1,8 +1,8 @@
 """Common module"""
 
 import numpy as np
-from sage.all import matrix
-from sage.all import ZZ
+from sage.matrix.constructor import Matrix as matrix
+from sage.rings.integer_ring import Z as ZZ
 from sage.interfaces.four_ti_2 import four_ti_2
 
 import sage.geometry.polyhedron.constructor as const

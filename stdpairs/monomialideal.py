@@ -20,9 +20,9 @@ import numpy as np
 from numpy import linalg as LA
 import json
 from pathlib import Path
-from sage.all import ZZ
-from sage.all import matrix
-from sage.all import cartesian_product
+from sage.rings.integer_ring import Z as ZZ
+from sage.matrix.constructor import Matrix as matrix
+from sage.categories.sets_cat import cartesian_product
 from sage.combinat.combination import Combinations
 from sage.misc.persist import save as sobj_save
 
