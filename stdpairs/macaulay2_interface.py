@@ -13,16 +13,18 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; version 3 of
-#  the License. 
+#  the License.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
 import numpy as np
 import json
 import ast
-from sage.all import macaulay2
-from sage.all import matrix
-from sage.all import ZZ
+from sage.misc.lazy_import import lazy_import
+from sage.matrix.constructor import Matrix as matrix
+from sage.rings.integer_ring import Z as ZZ
+
+lazy_import('sage.interfaces.macaulay2', 'macaulay2')
 
 from . import affinemonoid
 from . import monomialideal

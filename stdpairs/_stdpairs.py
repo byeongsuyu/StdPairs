@@ -21,13 +21,15 @@ import numpy as np
 import warnings
 import itertools
 import functools
-from sage.all import ZZ
-from sage.all import matrix
-from sage.all import macaulay2
-from sage.all import DiGraph
+from sage.rings.integer_ring import Z as ZZ
+from sage.matrix.constructor import Matrix as matrix
+from sage.misc.lazy_import import lazy_import
+from sage.graphs.digraph import DiGraph
 from sage.combinat.posets.posets import FinitePoset
 
-from . import affinemonoid 
+lazy_import('sage.interfaces.macaulay2', 'macaulay2')
+
+from . import affinemonoid
 from . import monomialideal
 from . import properpair
 from . import _zsolve_interface
